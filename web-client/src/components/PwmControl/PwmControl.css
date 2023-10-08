@@ -1,0 +1,15 @@
+.pwm-input__slider{
+
+}
+
+.pwm-input__number{
+  width: 4em;
+  text-align: center;
+  -moz-appearance: textfield;
+  
+}
+.pwm-input__number::-webkit-inner-spin-button,
+.pwm-input__number::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
