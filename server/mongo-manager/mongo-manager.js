@@ -1,6 +1,14 @@
 const mongoose = require("mongoose");
 const { database } = require("../config");
 const { EventEmitter } = require("node:events");
+/**
+ * Event emitter with following events:
+ * @event update - is triggered when update() method gets called
+ * @event update [deviceId] - is triggered when update() method gets called. 
+ * It's unique for device
+ * @event read - is triggered when read() method gets called
+ * @event create - is triggered when create() method gets called
+ */
 class MongoManager extends EventEmitter {
   #model;
   #onError;
@@ -12,13 +20,19 @@ class MongoManager extends EventEmitter {
 
   /**
    * Creates an interface for CRUD operations and opens a connection to the database specified in config module
-   * @param {mongoose.Schema} schema - The employees who are responsible for the project.
-   * @param {string} modelName - The name to represent the model in database
-   * @param {Function} onError - The callback that handles the response. Takes in the error and recall arguments in order.
+   * @param {Object} options
+   * @param {mongoose.Schema} options.schema - Mongoose schama for building the model.
+   * @param {string} options.modelName - The name to represent the model in database
+   * @param {Object} options.onError - Callbacks for handling method failures. Takes in the error and recall arguments in order.
+   * @param {errorHandler} options.onError.create - The callback to happen when create operation  is failing.
+   * @param {errorHandler} options.onError.upadte - The callback to happen when update operation is failing.
+   * @param {errorHandler} options.onError.read - The callback to happen when read operation is failing.
    * error indicating the issue in program and
    * recall being a function to recall the whole process
    */
+  constructor(options) {
     super();
+    const { modelName, schema, onError } = options;
     this.#model = mongoose.model(modelName, schema);
     this.#onError = onError;
     this.#open();
