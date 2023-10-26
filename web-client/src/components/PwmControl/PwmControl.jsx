@@ -1,15 +1,13 @@
 import './PwmControl.css'
-import { useState } from "react";
-import { postRequest } from '../../requests';
+import { useState, useContext } from "react";
+import { socketContext } from '../App';
 
-function PwmControl({ className = null }) {
+function PwmControl({ deviceId, className = null }) {
   const [pwm, setPwm] = useState("0");
-
-  // useEffect(() => {})
+  const socket = useContext(socketContext)
 
   const onMouseUp = (event) => {
-    console.log(pwm)
-    postRequest({pwm}, '/update')
+    socket.emit('update', deviceId, {pwm:Number(pwm)})
   }
 
   const handleChange = (event) => {
