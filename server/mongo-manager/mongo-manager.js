@@ -73,10 +73,17 @@ class MongoManager extends EventEmitter {
     return this.#model
       .updateOne({ deviceId }, dict)
       .exec()
-      .then((result) => {
-        this.emit("update", {deviceId, ...dict});// general update
-        this.emit("update " + deviceId, { deviceId, ...dict }); // device specific update
-        return result
+      .then(async (result) => {
+        let newDocument = null
+        if (result.matchedCount > 0){
+          //if document with given id exists
+          this.emit("update", {deviceId, ...dict});// emit general update
+          this.emit("update " + deviceId, { deviceId, ...dict }); // emit device specific update
+        }else {
+          //if no document with given id exists create a new one
+          newDocument = await this.create({deviceId, ...dict})
+        }
+        return {...result, newDocument}
       })
       .catch((error) => {
         this.#onError["update"](error, () => {
