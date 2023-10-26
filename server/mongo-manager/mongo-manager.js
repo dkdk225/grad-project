@@ -2,13 +2,7 @@ const mongoose = require("mongoose");
 const { database } = require("../config");
 
 /**
- * Callback used by myFunction.
- * @callback MyClass~onSuccess
- * @param {number} resultCode
- * @param {string} resultMessage
- */
-
-class MongoManager {
+class MongoManager extends EventEmitter {
   #model;
   #onError;
   /**
@@ -25,7 +19,7 @@ class MongoManager {
    * error indicating the issue in program and
    * recall being a function to recall the whole process
    */
-  constructor(modelName, schema, onError) {
+    super();
     this.#model = mongoose.model(modelName, schema);
     this.#onError = onError;
     this.#open();
