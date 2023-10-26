@@ -1,13 +1,20 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import "./App.css";
 import { PwmControl } from "../PwmControl";
-import eventBus from "../../eventBus";
-const eventBusContext = createContext(eventBus);
+import { io } from "socket.io-client";
+import { server } from "../../config";
 
+const socket = io(server.url);
+const socketContext = createContext();
 function App() {
+  return (
+    <>
+      <socketContext.Provider value={socket}>
 
-  return <PwmControl></PwmControl>;
+      </socketContext.Provider>
+    </>
+  );
 }
 
-export { eventBusContext };
+export { socketContext };
 export default App;

@@ -1,2 +1,2 @@
 export {default as App} from "./App"
-export { eventBusContext } from "./App";
+export { socketContext } from "./App";
