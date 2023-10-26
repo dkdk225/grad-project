@@ -46,10 +46,9 @@ class MongoManager {
    * @return {Promise} - Promise object resolving the object saved to the database
    */
   create(dict) {
-    const document = new this.#model(dict);
-    return document.save().catch((error) => {
-      this.#onError(error, () => {
-        this.create();
+    .catch((error) => {
+      this.#onError["create"](error, () => {
+        this.create(dict);
       });
     });
   }
@@ -63,8 +62,8 @@ class MongoManager {
       .updateOne({ deviceId }, dict)
       .exec()
       .catch((error) => {
-        this.#onError(error, () => {
-          this.update();
+        this.#onError["update"](error, () => {
+          this.update(deviceId, dict);
         });
       });
   }
@@ -77,7 +76,7 @@ class MongoManager {
       .find({ deviceId })
       .exec()
       .catch((error) => {
-        this.#onError(error, () => {
+        this.#onError["read"](error, () => {
           this.read(deviceId);
         });
       });
