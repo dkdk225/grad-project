@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { database } = require("../config");
-
-/**
+const { EventEmitter } = require("node:events");
 class MongoManager extends EventEmitter {
   #model;
   #onError;
@@ -40,6 +39,11 @@ class MongoManager extends EventEmitter {
    * @return {Promise} - Promise object resolving the object saved to the database
    */
   create(dict) {
+    return this.#model.create(dict)
+    .then((document)=>{
+      this.emit('create', document)
+      return document
+    })
     .catch((error) => {
       this.#onError["create"](error, () => {
         this.create(dict);
@@ -55,6 +59,11 @@ class MongoManager extends EventEmitter {
     return this.#model
       .updateOne({ deviceId }, dict)
       .exec()
+      .then((result) => {
+        this.emit("update", {deviceId, ...dict});// general update
+        this.emit("update " + deviceId, { deviceId, ...dict }); // device specific update
+        return result
+      })
       .catch((error) => {
         this.#onError["update"](error, () => {
           this.update(deviceId, dict);
@@ -69,6 +78,10 @@ class MongoManager extends EventEmitter {
     return this.#model
       .find({ deviceId })
       .exec()
+      .then((result) => {
+        this.emit("read", result);
+        return result
+      })
       .catch((error) => {
         this.#onError["read"](error, () => {
           this.read(deviceId);
