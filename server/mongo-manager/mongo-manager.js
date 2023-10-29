@@ -43,7 +43,7 @@ class MongoManager extends EventEmitter {
    */
   #open() {
     mongoose.connect(database.uri, database.options).catch((e) => {
-      console.log("connection to database has failed");
+      console.log("connection to database has failed, trying again...");
       this.#open();
     });
   }
