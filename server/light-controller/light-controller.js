@@ -3,7 +3,14 @@ const mongoose = require("mongoose");
 
 const lightControlSchema = new mongoose.Schema({
   deviceId: { type: String, unique: true },
-  pwm: Number,
+  red: { type: Number, default: 0 },
+  farmRed: { type: Number, default: 0 },
+  blueRoyal: { type: Number, default: 0 },
+  blue: { type: Number, default: 0 },
+  green: { type: Number, default: 0 },
+  ultraViolet: { type: Number, default: 0 },
+  warmWhite: { type: Number, default: 0 },
+  coldWhite: { type: Number, default: 0 },
 });
 /**
  * @type {MongoManager}
