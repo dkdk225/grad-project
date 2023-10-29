@@ -1,18 +1,22 @@
 const express = require("express");
-const { update } = require("./routes/index.js");
+const {startSocketIOServer} = require('./socket.io-server')
+
+
 const cors = require("cors");
-const {corsOrigins} = require('./config')
+const { corsOrigins } = require("./config");
 const app = express();
+const {lightController} = require('./light-controller')
 
 app.use(cors(corsOrigins));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/update', update);
 
 
 
 
 
-app.listen(3000, () => {
+
+const httpServer = startSocketIOServer(app)
+httpServer.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
