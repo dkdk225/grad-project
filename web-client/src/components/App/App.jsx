@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import "./App.css";
-import { PwmControl } from "../PwmControl";
+import "./common.css"
 import { io } from "socket.io-client";
 import { server } from "../../config";
 
