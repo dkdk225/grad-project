@@ -1,6 +1,6 @@
 import "./PwmControl.css";
-import { useState, useContext } from "react";
-import { socketContext } from "../App";
+import { useRef, useState } from "react";
+
 import { Box, Slider } from "@mui/material";
 const pwmColorClassNames = {
   red: "pwm-input__slider_color-red",
@@ -15,15 +15,9 @@ const pwmColorClassNames = {
 const max = 100;
 const min = 0;
 
-function PwmControl({ deviceId, color, className = null }) {
+function PwmControl({ deviceId, color, className = null, onPwmUpdate = null }) {
   const [pwm, setPwm] = useState(0);
-  const socket = useContext(socketContext);
-
-  const sendPwm = (pwmValue) => {
-    const update = {};
-    update[color] = Number(pwmValue);
-    socket.emit("update", deviceId, update);
-  };
+  
 
   const handleChange = (event) => {
     const newValue = Number(event.target.value);// typecast incoming value from textfield
@@ -39,12 +33,17 @@ function PwmControl({ deviceId, color, className = null }) {
     <div className={className ? className : ""}>
       <Box className="pwm-input__container">
         <Slider
+          ref={self}
           orientation="vertical"
           aria-label="Intensity"
           valueLabelDisplay="auto"
           onChange={handleChange}
           className={"pwm-input__slider " + pwmColorClassNames[color]}
           value={pwm}
+          onChangeCommitted={(event, newPwm)=>{
+            onPwmUpdate(newPwm);
+          }}
+
         />
         <input
           className="pwm-input__number text"
@@ -54,7 +53,7 @@ function PwmControl({ deviceId, color, className = null }) {
           value={String(pwm)}
           onChange={(event) => {
             const newPwm = handleChange(event);
-            sendPwm(newPwm);
+            onPwmUpdate(newPwm);
           }}
         />
       </Box>

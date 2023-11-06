@@ -1,8 +1,9 @@
 import "./PwmControlPanel.css";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { PwmControl } from "../PwmControl";
-import { Stack, Switch } from "@mui/material";
-import { ControlChart } from "../ControlChart"
+import { Switch } from "@mui/material";
+import { socketContext } from "../App";
+import DisplayChart from "../DisplayChart/DisplayChart";
 const pwmColors = {
   red: "Red",
   farmRed: "Farm Red",
@@ -15,14 +16,15 @@ const pwmColors = {
 };
 
 function PwmControlPanel({ deviceId }) {
-  const [switchCheck, setSwitchCheck] = useState(false)
+  const socket = useContext(socketContext);
+  const [switchCheck, setSwitchCheck] = useState(false);
 
   const switchOnChange = (event) => {
-    setSwitchCheck(event.target.checked)
+    setSwitchCheck(event.target.checked);
   };
   return (
     <>
-      <ControlChart></ControlChart>
+      <DisplayChart></DisplayChart>
       <div className="manual-control-aproval">
         <h2 className="manual-control-aproval__header header">Manual Mode</h2>
         <Switch checked={switchCheck} onChange={switchOnChange}></Switch>
@@ -38,6 +40,11 @@ function PwmControlPanel({ deviceId }) {
                 deviceId={deviceId}
                 key={color}
                 color={color}
+                onPwmUpdate={(pwmValue) => {
+                  const update = {};
+                  update[color] = Number(pwmValue);
+                  socket.emit("update", deviceId, update);
+                }}
               ></PwmControl>
             </li>
           );
