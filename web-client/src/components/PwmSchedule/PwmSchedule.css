@@ -1,0 +1,9 @@
+.point-manager__add-button{
+
+}
+.point-manager{
+  position: fixed;
+  right: 0%;
+  bottom: 0%;
+  padding: 0 1em 1em 0
+}
