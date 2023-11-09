@@ -85,7 +85,7 @@ class Schedule {
    */
   createEssentialFieldNamings() {
     const namingMap = {}
-    for(let field of this.getEssentialFieldsCopy()){
+    for(let field of Object.keys(this.#essentialFields)){
       let withSpaces = field.replace(/([A-Z])/g, " $1");
       withSpaces = withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
       namingMap[field] = withSpaces
