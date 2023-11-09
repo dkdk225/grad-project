@@ -20,7 +20,19 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <socketContext.Provider value={socket}>
           <eventBusContext.Provider value={eventBus}>
-            <PwmSchedule></PwmSchedule>
+            <PwmSchedule
+            colorMapping={{
+              red: "rgb(255, 0, 0)",
+              farmRed: "rgb(211, 33, 45)",
+              blueRoyal: "rgb(65, 105, 225)",
+              blue: "rgb(0, 0, 255)",
+              green: "rgb(0, 255, 0)",
+              ultraViolet: "rgb(138, 43, 226)",
+              warmWhite: "rgb(245, 222, 179)",
+              coldWhite: "rgb(161, 230, 234)",
+            }}
+            deviceId="fhgfk"
+            ></PwmSchedule>
           </eventBusContext.Provider>
         </socketContext.Provider>
       </LocalizationProvider>
