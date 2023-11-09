@@ -33,7 +33,7 @@ class Schedule {
     }
 
     for (let value of Object.keys(values)) {
-      newPoint[value] = values[value]
+      newPoint[value] = values[value];
     }
 
     newPoint.time = -10000;
@@ -53,7 +53,7 @@ class Schedule {
     newPointArr.forEach((point, index) => {
       point.index = index;
     });
-    return new Schedule({ pointArr: newPointArr , fields: this.#fields});
+    return new Schedule({ pointArr: newPointArr, fields: this.#fields });
   }
   /**
    * Seperate points into displayable format at chart
@@ -65,7 +65,7 @@ class Schedule {
     }
     for (let point of this.#pointArr) {
       for (let field of this.#essentialFields) {
-        parsed[field].push({ y: point[field], x:point.time});
+        parsed[field].push({ y: point[field], x: point.time });
       }
     }
     return parsed;
@@ -77,6 +77,20 @@ class Schedule {
     }
     this.#cache.pointArr = this.#pointArr.map((e) => e); // shallow copy of pointArr
     return this.#cache.pointArr;
+  }
+
+  /**
+   * Creates an object that has namings for field keys
+   * @returns {Object} An object which contains mappings from fields to their names.
+   */
+  createEssentialFieldNamings() {
+    const namingMap = {}
+    for(let field of this.getEssentialFieldsCopy()){
+      let withSpaces = field.replace(/([A-Z])/g, " $1");
+      withSpaces = withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+      namingMap[field] = withSpaces
+    }
+    return namingMap;
   }
 }
 
