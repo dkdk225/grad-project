@@ -1,15 +1,15 @@
-.pwm-input__container{
+.pwm-input__container {
   display: flex;
   align-items: center;
   flex-direction: column;
   height: 12em !important;
 }
 
-.pwm-input__number{
+.pwm-input__number {
   width: 4em;
   text-align: center;
   -moz-appearance: textfield;
-  outline:none;
+  outline: none;
   border: none;
   box-shadow: 0em 0em 0.1em 0em;
   border-radius: 0.3em;
@@ -17,7 +17,7 @@
   font-size: 1em;
 }
 
-.pwm-input__number:focus{
+.pwm-input__number:focus {
   box-shadow: 0em 0em 1em -0.4em;
 }
 
@@ -27,34 +27,8 @@
   margin: 0;
 }
 
-.pwm-input__slider{
+.pwm-input__slider {
   margin-top: 0.9em;
-  margin-bottom:0.9em;
+  margin-bottom: 0.9em;
   width: 0.4em !important;
 }
-
-.pwm-input__slider_color-red{
-  color:rgb(255, 0, 0) !important;
-}
-.pwm-input__slider_color-farm-red{
-  color:rgb(211, 33, 45) !important;
-}
-.pwm-input__slider_color-royal-blue{
-  color:rgb(65, 105, 225) !important;
-}
-.pwm-input__slider_color-blue{
-  color:rgb(0, 0, 255) !important;
-}
-.pwm-input__slider_color-green{
-  color:rgb(0, 255, 0) !important;
-}
-.pwm-input__slider_color-ultra-violet{
-  color:rgb(138, 43, 226) !important;
-}
-.pwm-input__slider_color-warm-white{
-  color:rgb(245, 222, 179) !important;
-}
-.pwm-input__slider_color-cold-white{
-  color:rgb(161, 230, 234) !important;
-}
-

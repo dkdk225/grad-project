@@ -3,23 +3,11 @@ import { useState } from "react";
 import { PwmControl } from "../PwmControl";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
-const pwmColors = {
-  red: "Red",
-  farmRed: "Farm Red",
-  blueRoyal: "Royal Blue",
-  blue: "Blue",
-  green: "Green",
-  ultraViolet: "Ultra Violet",
-  warmWhite: "Warm White",
-  coldWhite: "Cold White",
-};
-
-function PwmPointSet({ deviceId, point, onApply }) {
+function PwmPointSet({ deviceId, point, onApply, colorMapping, pwmNamings }) {
   console.log(point)
   const pointStates = {};
   for (let key of Object.keys(point)) {
@@ -60,16 +48,15 @@ function PwmPointSet({ deviceId, point, onApply }) {
       </div>
 
       <ul className="pwm-list">
-        {Object.keys(pwmColors).map((color) => {
+        {Object.keys(colorMapping).map((color) => {
           return (
             <li className="pwm-list__control" key={deviceId + color}>
               <span className="pwm-list__control-label text">
-                {pwmColors[color]}
+                {pwmNamings[color]}
               </span>
               <PwmControl
                 deviceId={deviceId}
-                key={color}
-                color={color}
+                color={colorMapping[color]}
                 value={pointStates[color].value}
                 onPwmUpdate={(pwmValue) => {
                   pointStates[color].setValue(pwmValue);

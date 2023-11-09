@@ -2,25 +2,14 @@ import "./PwmControl.css";
 import { useRef, useState } from "react";
 
 import { Box, Slider } from "@mui/material";
-const pwmColorClassNames = {
-  red: "pwm-input__slider_color-red",
-  farmRed: "pwm-input__slider_color-farm-red",
-  blueRoyal: "pwm-input__slider_color-royal-blue",
-  blue: "pwm-input__slider_color-blue",
-  green: "pwm-input__slider_color-green",
-  ultraViolet: "pwm-input__slider_color-ultra-violet",
-  warmWhite: "pwm-input__slider_color-warm-white",
-  coldWhite: "pwm-input__slider_color-cold-white",
-};
+
 const max = 100;
 const min = 0;
 
 function PwmControl({ deviceId, color, className = null, onPwmUpdate = null }) {
   const [pwm, setPwm] = useState(0);
-  
-
   const handleChange = (event) => {
-    const newValue = Number(event.target.value);// typecast incoming value from textfield
+    const newValue = Number(event.target.value); // typecast incoming value from textfield
     if (newValue <= 100 && newValue >= 0) {
       setPwm(newValue);
       return newValue;
@@ -38,12 +27,12 @@ function PwmControl({ deviceId, color, className = null, onPwmUpdate = null }) {
           aria-label="Intensity"
           valueLabelDisplay="auto"
           onChange={handleChange}
-          className={"pwm-input__slider " + pwmColorClassNames[color]}
+          style={{ color: color }}
+          className={"pwm-input__slider "}
           value={pwm}
-          onChangeCommitted={(event, newPwm)=>{
+          onChangeCommitted={(event, newPwm) => {
             onPwmUpdate(newPwm);
           }}
-
         />
         <input
           className="pwm-input__number text"

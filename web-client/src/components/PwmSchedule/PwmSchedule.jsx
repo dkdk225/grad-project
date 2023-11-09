@@ -6,30 +6,20 @@ import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { Schedule } from "../../schedule";
 
-const colorMapping = {
-  red: "color:rgb(255, 0, 0)",
-  farmRed: "rgb(211, 33, 45)",
-  blueRoyal: "rgb(65, 105, 225)",
-  blue: "rgb(0, 0, 255)",
-  green: "rgb(0, 255, 0)",
-  ultraViolet: "rgb(138, 43, 226)",
-  warmWhite: "rgb(245, 222, 179)",
-  coldWhite: "rgb(161, 230, 234)",
-};
-
-export default function PwmSchedule() {
-  const [schedule, setSchedule] = useState(new Schedule({fields: Object.keys(colorMapping)}));
+export default function PwmSchedule({ colorMapping, deviceId }) {
+  const [schedule, setSchedule] = useState(
+    new Schedule({ fields: Object.keys(colorMapping) })
+  );
   const onPointChange = (newPoint) => {
-    setSchedule(schedule=>schedule.updatePoint(newPoint))
+    setSchedule((schedule) => schedule.updatePoint(newPoint));
   };
   const onAdd = () => {
     setSchedule((schedule) => schedule.newPoint());
   };
-  const parsedSchedule = schedule.parse()
+  const parsedSchedule = schedule.parse();
   for (let colorKey of Object.keys(colorMapping)) {
-    parsedSchedule[colorKey].chartColor = colorMapping[colorKey]
+    parsedSchedule[colorKey].chartColor = colorMapping[colorKey];
   }
-
 
   return (
     <div className="pwm-schedule">
@@ -50,7 +40,9 @@ export default function PwmSchedule() {
             return (
               <li className="pwm-schedule__point-list-item" key={index}>
                 <PwmPointSet
-                  deviceId={"dflgh"}
+                  colorMapping={colorMapping}
+                  pwmNamings={schedule.createEssentialFieldNamings()}
+                  deviceId={deviceId}
                   point={point}
                   onApply={onPointChange}
                 ></PwmPointSet>

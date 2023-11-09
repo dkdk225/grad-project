@@ -77,9 +77,6 @@ const mapDateConfig = (min, max) => {
 
 /**
  * Displays a given set of data on a chart
- * @param {Object} param0
- * @param {}
- * @returns
  */
 export default function DisplayChart({ schedule }) {
   console.log(schedule);
