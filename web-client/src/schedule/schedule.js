@@ -84,11 +84,11 @@ class Schedule {
    * @returns {Object} An object which contains mappings from fields to their names.
    */
   createEssentialFieldNamings() {
-    const namingMap = {}
-    for(let field of Object.keys(this.#essentialFields)){
+    const namingMap = {};
+    for (let field of Object.keys(this.#essentialFields)) {
       let withSpaces = field.replace(/([A-Z])/g, " $1");
       withSpaces = withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
-      namingMap[field] = withSpaces
+      namingMap[field] = withSpaces;
     }
     return namingMap;
   }
