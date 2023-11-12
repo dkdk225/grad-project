@@ -79,7 +79,6 @@ const mapDateConfig = (min, max) => {
  * Displays a given set of data on a chart
  */
 export default function DisplayChart({ schedule }) {
-  console.log(schedule);
   const config = mapDateConfig(0, 86400);
 
   const points = {
@@ -87,6 +86,7 @@ export default function DisplayChart({ schedule }) {
   };
   for (let dataset of Object.keys(schedule)) {
     points.datasets.push({
+      label:schedule[dataset].label,
       tension: 0.3,
       borderColor: schedule[dataset].chartColor,
       data: [{ x: -1000, y: 0 }, ...schedule[dataset], { x: 87400, y: 0 }],

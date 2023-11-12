@@ -80,8 +80,10 @@ class Schedule {
 
     if (!this.#cache.parsed) {
       const parsed = {};
+      const fieldNamings = this.createEssentialFieldNamings()
       for (let field of this.#essentialFields) {
         parsed[field] = [];
+        parsed[field].label = fieldNamings[field];
       }
 
       for (let point of getSortedPoints()) {
