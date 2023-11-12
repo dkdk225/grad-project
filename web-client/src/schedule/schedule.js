@@ -4,29 +4,27 @@
  */
 class Schedule {
   #fields;
-  #pointArr;
+  #pointStorage;
   #essentialFields;
   #cache;
   /**
    * @param {Object} options - An options object
-   * @param {Point[]} options.pointArr - Initial array of points to be stored
+   * @param {Object} options.pointStorage - Initial object of points to be stored
    * @param {string[]} options.fields - Key values of the fields
    */
-  constructor({ fields, pointArr = [] }) {
+  constructor({ fields, pointStorage = {} }) {
     this.#fields = fields;
-    this.#pointArr = pointArr;
+    this.#pointStorage = pointStorage;
     this.#cache = {};
     // essential fields are fields related to data excluding fields such as index and time
-    this.#essentialFields = fields.filter(
-      (field) => field !== "time" || field !== "index"
-    );
+    this.#essentialFields = fields.filter((field) => field !== "time");
   }
 
   /**
    * Initiate a point
-   *
+   * @param {Object} - Object containing key-value pairs for initiation
    */
-  newPoint(values = []) {
+  newPoint(values = {}) {
     const newPoint = {};
     for (let field of this.#fields) {
       newPoint[field] = 0;
@@ -36,47 +34,62 @@ class Schedule {
       newPoint[value] = values[value];
     }
 
-    newPoint.time = -10000;
-    newPoint.index = this.#pointArr.length;
+    newPoint.time = -500;
+    newPoint.key = generateKey(); //this key is used to access the point and to generate react components
+    const newPointStorage = { ...this.#pointStorage }; // copy the object
+    newPointStorage[newPoint.key] = newPoint;
     return new Schedule({
       fields: this.#fields,
-      pointArr: [newPoint, ...this.#pointArr],
+      pointStorage: newPointStorage,
     });
   }
 
   updatePoint(newPoint) {
-    const newPointArr = this.#pointArr.map((e) => e); // copy the point array
-    newPointArr[newPoint.index] = newPoint;
-    newPointArr.sort((e, b) => {
-      return e.time - b.time;
+    const newPointStorage = { ...this.#pointStorage };
+    newPointStorage[newPoint.key] = newPoint;
+    return new Schedule({
+      pointStorage: newPointStorage,
+      fields: this.#fields,
     });
-    newPointArr.forEach((point, index) => {
-      point.index = index;
-    });
-    return new Schedule({ pointArr: newPointArr, fields: this.#fields });
-  }
-  /**
-   * Seperate points into displayable format at chart
-   */
-  parse() {
-    const parsed = {};
-    for (let field of this.#essentialFields) {
-      parsed[field] = [];
-    }
-    for (let point of this.#pointArr) {
-      for (let field of this.#essentialFields) {
-        parsed[field].push({ y: point[field], x: point.time });
-      }
-    }
-    return parsed;
   }
 
-  getPointArrCopy() {
-    if (this.#cache.pointArr) {
-      return this.#cache.pointArr;
+  /**
+   * Seperate points into displayable format at chart.
+   * Caches the response.
+   */
+  parse() {
+    const getSortedPoints = () => {
+      const sortedPoints = [];
+      for (let key of Object.keys(this.#pointStorage)) {
+        sortedPoints.push(this.#pointStorage[key]);
+      }
+      sortedPoints.sort((e, b) => {
+        return e.time - b.time;
+      });
+      return sortedPoints;
+    };
+
+    if (!this.#cache.parsed) {
+      const parsed = {};
+      for (let field of this.#essentialFields) {
+        parsed[field] = [];
+      }
+
+      for (let point of getSortedPoints()) {
+        for (let field of this.#essentialFields) {
+          parsed[field].push({ y: point[field], x: point.time });
+        }
+      }
+      this.#cache.parsed = parsed;
     }
-    this.#cache.pointArr = this.#pointArr.map((e) => e); // shallow copy of pointArr
-    return this.#cache.pointArr;
+    return this.#cache.parsed;
+  }
+
+  getPointStorageCopy() {
+    if (!this.#cache.pointStorage) {
+      this.#cache.pointStorage = { ...this.#pointStorage }; // shallow copy of pointStorage
+    }
+    return this.#cache.pointStorage;
   }
 
   /**
@@ -93,5 +106,11 @@ class Schedule {
     return namingMap;
   }
 }
+
+let currentKey = -1;
+const generateKey = () => {
+  currentKey++;
+  return String(currentKey);
+};
 
 export { Schedule };

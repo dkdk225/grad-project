@@ -36,9 +36,10 @@ export default function PwmSchedule({ colorMapping, deviceId }) {
           </Button>
         </div>
         <ul className="pwm-schedule__point-list">
-          {schedule.getPointArrCopy().map((point, index) => {
+          {Object.keys(schedule.getPointStorageCopy()).map((key) => {
+            const point = schedule.getPointStorageCopy()[key]
             return (
-              <li className="pwm-schedule__point-list-item" key={index}>
+              <li className="pwm-schedule__point-list-item" key={key}>
                 <PwmPointSet
                   colorMapping={colorMapping}
                   pwmNamings={schedule.createEssentialFieldNamings()}
