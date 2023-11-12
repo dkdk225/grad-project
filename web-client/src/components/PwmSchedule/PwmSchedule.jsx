@@ -16,6 +16,9 @@ export default function PwmSchedule({ colorMapping, deviceId }) {
   const onAdd = () => {
     setSchedule((schedule) => schedule.newPoint());
   };
+  const onPointRemove = (key) => {
+    setSchedule((schedule) => schedule.removePoint(key));
+  };
   const parsedSchedule = schedule.parse();
   for (let colorKey of Object.keys(colorMapping)) {
     parsedSchedule[colorKey].chartColor = colorMapping[colorKey];
@@ -37,7 +40,7 @@ export default function PwmSchedule({ colorMapping, deviceId }) {
         </div>
         <ul className="pwm-schedule__point-list">
           {Object.keys(schedule.getPointStorageCopy()).map((key) => {
-            const point = schedule.getPointStorageCopy()[key]
+            const point = schedule.getPointStorageCopy()[key];
             return (
               <li className="pwm-schedule__point-list-item" key={key}>
                 <PwmPointSet
@@ -46,6 +49,7 @@ export default function PwmSchedule({ colorMapping, deviceId }) {
                   deviceId={deviceId}
                   point={point}
                   onApply={onPointChange}
+                  onRemove={onPointRemove}
                 ></PwmPointSet>
               </li>
             );

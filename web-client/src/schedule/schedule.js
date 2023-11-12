@@ -44,6 +44,15 @@ class Schedule {
     });
   }
 
+  removePoint(key) {
+    const newPointStorage = {...this.#pointStorage}
+    delete newPointStorage[key]
+    return new Schedule({
+      fields: this.#fields,
+      pointStorage: newPointStorage,
+    });
+  }
+
   updatePoint(newPoint) {
     const newPointStorage = { ...this.#pointStorage };
     newPointStorage[newPoint.key] = newPoint;

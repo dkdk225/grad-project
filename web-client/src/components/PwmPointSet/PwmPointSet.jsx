@@ -7,8 +7,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
-function PwmPointSet({ deviceId, point, onApply, colorMapping, pwmNamings }) {
-  console.log(point)
+function PwmPointSet({
+  deviceId,
+  point,
+  onApply,
+  colorMapping,
+  pwmNamings,
+  onRemove,
+}) {
   const pointStates = {};
   for (let key of Object.keys(point)) {
     const [value, setValue] = useState(point[key]);
@@ -24,7 +30,6 @@ function PwmPointSet({ deviceId, point, onApply, colorMapping, pwmNamings }) {
           onChange={(newTime) => {
             const milliseconds = newTime.$H * 3600 + newTime.$m * 60;
             pointStates.time.setValue(milliseconds);
-            console.log(pointStates)
           }}
         />
         <div>
@@ -41,7 +46,12 @@ function PwmPointSet({ deviceId, point, onApply, colorMapping, pwmNamings }) {
           >
             Apply
           </Button>
-          <IconButton className="pwm-point-set__delete">
+          <IconButton
+            className="pwm-point-set__delete"
+            onClick={() => {
+              onRemove(pointStates.key.value);
+            }}
+          >
             <DeleteIcon className="pwm-point-set__delete-icon" />
           </IconButton>
         </div>
