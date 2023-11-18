@@ -2,7 +2,7 @@ import "./PwmControlPanel.css";
 import { useState, useContext } from "react";
 import { PwmControl } from "../PwmControl";
 import { Switch } from "@mui/material";
-import { socketContext } from "../App";
+import { requestHandlerContext } from "../App";
 import DisplayChart from "../DisplayChart/DisplayChart";
 const pwmColors = {
   red: "Red",
@@ -16,7 +16,7 @@ const pwmColors = {
 };
 
 function PwmControlPanel({ deviceId }) {
-  const socket = useContext(socketContext);
+  const requestHandler = useContext(requestHandlerContext);
   const [switchCheck, setSwitchCheck] = useState(false);
 
   const switchOnChange = (event) => {
@@ -43,7 +43,7 @@ function PwmControlPanel({ deviceId }) {
                 onPwmUpdate={(pwmValue) => {
                   const update = {};
                   update[color] = Number(pwmValue);
-                  socket.emit("update", deviceId, update);
+                  requestHandler.emit("update", deviceId, update);
                 }}
               ></PwmControl>
             </li>

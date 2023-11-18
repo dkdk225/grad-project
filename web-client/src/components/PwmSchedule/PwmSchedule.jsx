@@ -4,9 +4,10 @@ import { PwmPointSet } from "../PwmPointSet";
 import "./PwmSchedule.css";
 import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
+import DoneIcon from "@mui/icons-material/Done";
 import { Schedule } from "../../schedule";
 
-export default function PwmSchedule({ colorMapping, deviceId }) {
+export default function PwmSchedule({ colorMapping, deviceId, onApplySchedule }) {
   const [schedule, setSchedule] = useState(
     new Schedule({ fields: Object.keys(colorMapping) })
   );
@@ -27,7 +28,20 @@ export default function PwmSchedule({ colorMapping, deviceId }) {
   return (
     <div className="pwm-schedule">
       <DisplayChart schedule={parsedSchedule}></DisplayChart>
+
       <div className="point-container">
+        <Button
+          variant="contained"
+          className="point-manager__add-button"
+          startIcon={<DoneIcon />}
+          onClick={() => {
+            onApplySchedule(schedule)
+            console.log(schedule)
+          }}
+        >
+          Apply Schedule
+        </Button>
+
         <div className="point-manager">
           <Button
             variant="contained"
