@@ -1,16 +1,33 @@
 const { MongoManager } = require("../mongo-manager");
 const mongoose = require("mongoose");
 
+const schedulePoint = new mongoose.Schema({
+  x: { type: Number, min: 0, max: 86400 }, //time of day in seconds
+  y: { type: Number, min: 0, max: 100 }, //percentage
+});
 const lightControlSchema = new mongoose.Schema({
   deviceId: { type: String, unique: true },
-  red: { type: Number, default: 0 },
-  farmRed: { type: Number, default: 0 },
-  blueRoyal: { type: Number, default: 0 },
-  blue: { type: Number, default: 0 },
-  green: { type: Number, default: 0 },
-  ultraViolet: { type: Number, default: 0 },
-  warmWhite: { type: Number, default: 0 },
-  coldWhite: { type: Number, default: 0 },
+  mode: { type: String, match: /schedule|manual/, default:"manual" },
+  manual: {
+    red: { type: Number, default: 0 },
+    farmRed: { type: Number, default: 0 },
+    blueRoyal: { type: Number, default: 0 },
+    blue: { type: Number, default: 0 },
+    green: { type: Number, default: 0 },
+    ultraViolet: { type: Number, default: 0 },
+    warmWhite: { type: Number, default: 0 },
+    coldWhite: { type: Number, default: 0 },
+  },
+  schedule: {
+    red: [schedulePoint],
+    farmRed: [schedulePoint],
+    blueRoyal: [schedulePoint],
+    blue: [schedulePoint],
+    green: [schedulePoint],
+    ultraViolet: [schedulePoint],
+    warmWhite: [schedulePoint],
+    coldWhite: [schedulePoint],
+  },
 });
 /**
  * @type {MongoManager}
