@@ -17,4 +17,17 @@ const postRequest = (data, path = null) => {
   });
 };
 
-export {postRequest}
+/**
+ * Send an post request to specified path
+ * 
+ * @param {string} path The path to send the request
+ */
+const getRequest = (path = null) => {
+  const url = path ? server.url + path : server.url;
+  return axios({
+    method: "get",
+    url: url,
+  });
+};
+
+export {postRequest, getRequest}

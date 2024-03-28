@@ -8,19 +8,17 @@ class SocketHandler extends RequestHandler {
     this.#socket = io(this.url);
   }
   update(id, dictionary) {
-    console.log("a call from SocketHandler")
-    console.log(id, dictionary)
     this.#socket.emit("update", id, dictionary);
   }
-  watch(id, body) {
+  watch(id, onUpdate) {
     this.#socket.emit("watch", id);
     this.#socket.on("update", (updateDict) => {
-      body(id, updateDict);
+      onUpdate(id, updateDict);
     });
   }
-  stopWatch(body) {
-    this.#socket("unWatch", id);
-    this.#socket.off("update", body);
+  stopWatch(onUpdate) {
+    this.#socket("unwatch", id);
+    this.#socket.off("update", onUpdate);
   }
 }
 export { SocketHandler };

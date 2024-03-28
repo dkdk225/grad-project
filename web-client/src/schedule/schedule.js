@@ -45,8 +45,8 @@ class Schedule {
   }
 
   removePoint(key) {
-    const newPointStorage = {...this.#pointStorage}
-    delete newPointStorage[key]
+    const newPointStorage = { ...this.#pointStorage };
+    delete newPointStorage[key];
     return new Schedule({
       fields: this.#fields,
       pointStorage: newPointStorage,
@@ -56,6 +56,26 @@ class Schedule {
   updatePoint(newPoint) {
     const newPointStorage = { ...this.#pointStorage };
     newPointStorage[newPoint.key] = newPoint;
+    return new Schedule({
+      pointStorage: newPointStorage,
+      fields: this.#fields,
+    });
+  }
+  /**
+   * builds the schedule according to parsed points
+   */
+  buildPointStorage(parsedPoints) {
+    const newPointStorage = {};
+    const firstfield = Object.keys(parsedPoints)[0]
+    for (let i = 0; i < parsedPoints[firstfield].length; i++) {
+      const newPoint = {};
+      for (let field of this.#fields) {
+        newPoint[field] = parsedPoints[field][i].y;
+      }
+      newPoint.key = generateKey();
+      newPoint.time = parsedPoints[firstfield][i].x;
+      newPointStorage[newPoint.key] = newPoint;
+    }
     return new Schedule({
       pointStorage: newPointStorage,
       fields: this.#fields,
@@ -80,7 +100,7 @@ class Schedule {
 
     if (!this.#cache.parsed) {
       const parsed = {};
-      const fieldNamings = this.createEssentialFieldNamings()
+      const fieldNamings = this.createEssentialFieldNamings();
       for (let field of this.#essentialFields) {
         parsed[field] = [];
         parsed[field].label = fieldNamings[field];

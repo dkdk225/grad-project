@@ -3,5 +3,5 @@ export default {
   /**
    * @type {'socket' | 'ajax'}
    */
-  requestHandler: "socket", //socket | ajax
+  requestHandler: "ajax", //socket | ajax
 };

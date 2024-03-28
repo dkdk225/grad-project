@@ -1,11 +1,14 @@
 import { RequestHandler } from "./request-handler";
-import { postRequest} from "../requests"
+import { postRequest, getRequest} from "../requests"
 class AjaxHandler extends RequestHandler {
   constructor() {
-    super()
+    super();
   }
-  update(id, dictionary) {
-    postRequest({id, ...dict}, this.url)
+  update(id, dict) {
+    postRequest({ id, ...dict }, `/api/device/update`);
+  }
+  watch(id, onUpdate) {
+    getRequest(`/api/device/${id}`).then(onUpdate);
   }
 }
 export { AjaxHandler };
