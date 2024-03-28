@@ -2,8 +2,7 @@ import "./LightController.css";
 import { useContext } from "react";
 import { requestHandlerContext, eventBusContext } from "../App";
 import { PwmSchedule } from "../common/PwmSchedule";
-const deviceId = "6564gf"
-function LightController() {
+function LightController(deviceId) {
   const requestHandler = useContext(requestHandlerContext)
   return (
     <PwmSchedule
