@@ -1,7 +1,7 @@
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { corsOrigins } = require("../config");
-const { lightController } = require("../light-controller");
+const { lightController } = require("../db/light-controller");
 const {eventBus} = require("../event-bus");
 
 /**

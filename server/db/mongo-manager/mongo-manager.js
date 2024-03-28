@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-const { database } = require("../config");
+const { database } = require("../../config");
 const { EventEmitter } = require("node:events");
 /**
  * Event emitter with following events:
  * @event update - is triggered when update() method gets called
- * @event update [deviceId] - is triggered when update() method gets called. 
+ * @event update [deviceId] - is triggered when update() method gets called.
  * It's unique for device
  * @event read - is triggered when read() method gets called
  * @event create - is triggered when create() method gets called
@@ -53,16 +53,17 @@ class MongoManager extends EventEmitter {
    * @return {Promise} - Promise object resolving the object saved to the database
    */
   create(dict) {
-    return this.#model.create(dict)
-    .then((document)=>{
-      this.emit('create', document)
-      return document
-    })
-    .catch((error) => {
-      this.#onError["create"](error, () => {
-        this.create(dict);
+    return this.#model
+      .create(dict)
+      .then((document) => {
+        this.emit("create", document);
+        return document;
+      })
+      .catch((error) => {
+        this.#onError["create"](error, () => {
+          this.create(dict);
+        });
       });
-    });
   }
   /**
    * @param {string} deviceId - The id of the device for database lookup
@@ -74,16 +75,16 @@ class MongoManager extends EventEmitter {
       .updateOne({ deviceId }, dict)
       .exec()
       .then(async (result) => {
-        let newDocument = null
-        if (result.matchedCount > 0){
+        let newDocument = null;
+        if (result.matchedCount > 0) {
           //if document with given id exists
-          this.emit("update", {deviceId, ...dict});// emit general update
+          this.emit("update", { deviceId, ...dict }); // emit general update
           this.emit("update " + deviceId, { deviceId, ...dict }); // emit device specific update
-        }else {
+        } else {
           //if no document with given id exists create a new one
-          newDocument = await this.create({deviceId, ...dict})
+          newDocument = await this.create({ deviceId, ...dict });
         }
-        return {...result, newDocument}
+        return { ...result, newDocument };
       })
       .catch((error) => {
         this.#onError["update"](error, () => {
@@ -92,22 +93,39 @@ class MongoManager extends EventEmitter {
       });
   }
   /**
-   * @param {string} deviceId - The id of the device for database lookup
+   * @param {string} dict - The dictionary for lookup
    * @return {Promise} - Promise object represents the database item
    */
-  read(deviceId) {
+  read(dict) {
     return this.#model
-      .find({ deviceId })
+      .find(dict)
       .exec()
       .then((result) => {
         this.emit("read", result);
-        return result
+        return result;
       })
       .catch((error) => {
         this.#onError["read"](error, () => {
-          this.read(deviceId);
+          this.read(dict);
         });
       });
+  }
+  /**
+   * looks at the set returns the id of first object that exists for given dictionary
+   * @param {Object} dict - The dictionary for lookup
+   * @return {Promise} - Promise object represents the database item
+   */
+  async exists(dict) {
+    return await this.#model.exists(dict);
+  }
+
+  /**
+   * looks at the set returns the first object that exists for given dictionary
+   * @param {Object} dict - The dictionary for lookup
+   * @return {Promise} - Promise object represents the database item
+   */
+  async readFirst(dict) {
+    return await this.#model.findOne(dict);
   }
 }
 
