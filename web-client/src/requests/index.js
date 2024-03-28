@@ -1,1 +1,1 @@
-export { postRequest } from "./requests";
+export { postRequest, getRequest } from "./requests";
