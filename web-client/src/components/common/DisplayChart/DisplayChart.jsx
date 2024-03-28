@@ -3,9 +3,8 @@ import Chart from "chart.js/auto";
 import "chartjs-plugin-dragdata";
 import { Line, Scatter } from "react-chartjs-2";
 import "./DisplayChart.css";
-import { secondsToHourClock } from "../../utils";
+import { secondsToHourClock } from "../../../utils";
 
-//=================
 /**
  * Transforms the given value within given interval into HH:MM format
  * @param {number} value - Number to be transformed into HH:MM form
@@ -80,7 +79,6 @@ const mapDateConfig = (min, max) => {
  */
 export default function DisplayChart({ schedule }) {
   const config = mapDateConfig(0, 86400);
-
   const points = {
     datasets: [],
   };

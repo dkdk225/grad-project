@@ -5,9 +5,9 @@ import "./PwmSchedule.css";
 import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import DoneIcon from "@mui/icons-material/Done";
-import { Schedule } from "../../schedule";
+import { Schedule } from "../../../schedule";
 
-export default function PwmSchedule({ colorMapping, deviceId, onApplySchedule }) {
+export default function PwmSchedule({ colorMapping, deviceId, onApplySchedule, onMount }) {
   const [schedule, setSchedule] = useState(
     new Schedule({ fields: Object.keys(colorMapping) })
   );
@@ -24,6 +24,9 @@ export default function PwmSchedule({ colorMapping, deviceId, onApplySchedule })
   for (let colorKey of Object.keys(colorMapping)) {
     parsedSchedule[colorKey].chartColor = colorMapping[colorKey];
   }
+  useEffect(()=>{
+    onMount(setSchedule)
+  }, [])
 
   return (
     <div className="pwm-schedule">
@@ -36,7 +39,6 @@ export default function PwmSchedule({ colorMapping, deviceId, onApplySchedule })
           startIcon={<DoneIcon />}
           onClick={() => {
             onApplySchedule(schedule)
-            console.log(schedule)
           }}
         >
           Apply Schedule

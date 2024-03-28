@@ -6,6 +6,9 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import dayjs from "dayjs";
+import objectSupport from 'dayjs/plugin/objectSupport';
+dayjs.extend(objectSupport)
 
 function PwmPointSet({
   deviceId,
@@ -15,19 +18,22 @@ function PwmPointSet({
   pwmNamings,
   onRemove,
 }) {
+  
   const pointStates = {};
   for (let key of Object.keys(point)) {
     const [value, setValue] = useState(point[key]);
     pointStates[key] = { value, setValue };
   }
-
+  const initialTime = point.time>0? dayjs({second:point.time }): null
   return (
     <div className="pwm-point-set">
       <div className="pwm-point-set__actions">
         <TimePicker
           label="Time"
+          defaultValue={initialTime}
           ampm={false}
           onChange={(newTime) => {
+            console.log(newTime)
             const milliseconds = newTime.$H * 3600 + newTime.$m * 60;
             pointStates.time.setValue(milliseconds);
           }}
