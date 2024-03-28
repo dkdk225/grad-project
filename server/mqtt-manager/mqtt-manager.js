@@ -34,9 +34,14 @@ class MqttManager {
         console.log(granted);
       });
     });
-    this.client.on("message", (topic, message) => {
-      console.log("from topic: "+topic+" "+message.toString());
+
+
+    eventBus.once("web-client/watch", (id) =>{
+      this.client.on("message", (topic, message) => {
+        console.log("from topic: " + topic + " " + message.toString());
+      });
     });
+
   }
 }
 
