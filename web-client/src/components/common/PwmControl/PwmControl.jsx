@@ -6,8 +6,8 @@ import { Box, Slider } from "@mui/material";
 const max = 100;
 const min = 0;
 
-function PwmControl({ deviceId, color, className = null, onPwmUpdate = null }) {
-  const [pwm, setPwm] = useState(0);
+function PwmControl({ deviceId, color,value, className = null, onPwmUpdate = null }) {
+  const [pwm, setPwm] = useState(value);
   const handleChange = (event) => {
     const newValue = Number(event.target.value); // typecast incoming value from textfield
     if (newValue <= 100 && newValue >= 0) {
