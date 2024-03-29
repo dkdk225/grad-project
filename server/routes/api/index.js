@@ -1,9 +1,9 @@
 const database = require("./database");
-const device = require("./device");
+const deviceControl = require("./device-control");
 const user = require("./user");
 
 module.exports = {
   database,
-  device,
-  user
-}
+  deviceControl,
+  user,
+};

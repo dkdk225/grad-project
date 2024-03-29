@@ -12,7 +12,7 @@ app.use(cors(corsOrigins));
 app.use(jwtOrigins, jwtMiddleware());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(api.device);
+app.use(api.deviceControl);
 app.use(api.user);
 
 mqttManager.connect();
