@@ -66,39 +66,38 @@ class MongoManager extends EventEmitter {
       });
   }
   /**
-   * @param {string} deviceId - The id of the device for database lookup
+   * @param {string} filter - The id of the device for database lookup
    * @param {object} dict - The object containing new key-value pairs for update
    * @return {Promise} - Promise object resolving the database item
    */
-  update(deviceId, dict) {
+  update(filter, dict) {
     return this.#model
-      .updateOne({ deviceId }, dict)
+      .updateOne(filter, dict)
       .exec()
       .then(async (result) => {
         let newDocument = null;
         if (result.matchedCount > 0) {
           //if document with given id exists
-          this.emit("update", { deviceId, ...dict }); // emit general update
-          this.emit("update " + deviceId, { deviceId, ...dict }); // emit device specific update
+          this.emit("update", { ...filter, ...dict }); // emit general update
         } else {
           //if no document with given id exists create a new one
-          newDocument = await this.create({ deviceId, ...dict });
+          newDocument = await this.create({ ...filter, ...dict });
         }
         return { ...result, newDocument };
       })
       .catch((error) => {
         this.#onError["update"](error, () => {
-          this.update(deviceId, dict);
+          this.update(filter, dict);
         });
       });
   }
   /**
-   * @param {string} dict - The dictionary for lookup
+   * @param {string} filter - The dictionary for lookup
    * @return {Promise} - Promise object represents the database item
    */
-  read(dict) {
+  read(filter) {
     return this.#model
-      .find(dict)
+      .find(filter)
       .exec()
       .then((result) => {
         this.emit("read", result);
@@ -106,27 +105,27 @@ class MongoManager extends EventEmitter {
       })
       .catch((error) => {
         this.#onError["read"](error, () => {
-          this.read(dict);
+          this.read(filter);
         });
       });
   }
   /**
    * looks at the set returns the id of first object that exists for given dictionary
-   * @param {Object} dict - The dictionary for lookup
+   * @param {Object} filter - The dictionary for lookup
    * @return {Promise} - Promise object represents the database item
    */
-  async exists(dict) {
-    return await this.#model.exists(dict);
+  async exists(filter) {
+    return await this.#model.exists(filter);
   }
 
   /**
    * looks at the set returns the first object that exists for given dictionary
-   * @param {Object} dict - The dictionary for lookup
+   * @param {Object} filter - The dictionary for lookup
    * @param {string} select - filter for selecting or ignoring fields: add - to front in order to ignore like -_id
    * @return {Promise} - Promise object represents the database item
    */
-  async readFirst(dict, select="") {
-    return await this.#model.findOne(dict).select(select);
+  async readFirst(filter, select = "") {
+    return await this.#model.findOne(filter).select(select);
   }
 }
 
