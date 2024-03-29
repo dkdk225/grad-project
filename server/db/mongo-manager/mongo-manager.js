@@ -122,10 +122,11 @@ class MongoManager extends EventEmitter {
   /**
    * looks at the set returns the first object that exists for given dictionary
    * @param {Object} dict - The dictionary for lookup
+   * @param {string} select - filter for selecting or ignoring fields: add - to front in order to ignore like -_id
    * @return {Promise} - Promise object represents the database item
    */
-  async readFirst(dict) {
-    return await this.#model.findOne(dict);
+  async readFirst(dict, select="") {
+    return await this.#model.findOne(dict).select(select);
   }
 }
 

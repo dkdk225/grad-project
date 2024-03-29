@@ -10,7 +10,7 @@ const userRouter = Router({
 //use update to create objects
 userRouter.post("/api/user/login", (req, res) => {
   const { userId, password } = req.body;
-  user.readFirst({ userId }).then((result) => {
+  user.readFirst({ userId }, "-devices").then((result) => {
     if (result || bcrypt.compareSync(password, result.password)) {
       //create a session for user
       const credentials = {
