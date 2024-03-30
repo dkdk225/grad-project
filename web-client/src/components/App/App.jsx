@@ -8,7 +8,7 @@ const eventBusContext = createContext(eventBus);
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { RequestHandler } from "../../request-handler";
-import {LightController} from "../LightController"
+import { LightController } from "../LightController";
 
 const requestHandler = new RequestHandler();
 const requestHandlerContext = createContext(requestHandler);
@@ -20,7 +20,7 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <requestHandlerContext.Provider value={requestHandler}>
           <eventBusContext.Provider value={eventBus}>
-            <LightController></LightController>
+            <LightController deviceId={deviceId}></LightController>
           </eventBusContext.Provider>
         </requestHandlerContext.Provider>
       </LocalizationProvider>
@@ -28,5 +28,5 @@ function App() {
   );
 }
 
-export { requestHandlerContext,eventBusContext };
+export { requestHandlerContext, eventBusContext };
 export default App;
