@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-const { database } = require("../config");
+const { database } = require("../../config");
 const { EventEmitter } = require("node:events");
 /**
  * Event emitter with following events:
  * @event update - is triggered when update() method gets called
- * @event update [deviceId] - is triggered when update() method gets called. 
+ * @event update [deviceId] - is triggered when update() method gets called.
  * It's unique for device
  * @event read - is triggered when read() method gets called
  * @event create - is triggered when create() method gets called
@@ -53,61 +53,88 @@ class MongoManager extends EventEmitter {
    * @return {Promise} - Promise object resolving the object saved to the database
    */
   create(dict) {
-    return this.#model.create(dict)
-    .then((document)=>{
-      this.emit('create', document)
-      return document
-    })
-    .catch((error) => {
-      this.#onError["create"](error, () => {
-        this.create(dict);
+    return this.#model
+      .create(dict)
+      .then((document) => {
+        this.emit("create", document);
+        return document;
+      })
+      .catch((error) => {
+        this.#onError["create"](error, () => {
+          this.create(dict);
+        });
       });
-    });
   }
   /**
-   * @param {string} deviceId - The id of the device for database lookup
+   * @param {string} filter - The id of the device for database lookup
    * @param {object} dict - The object containing new key-value pairs for update
    * @return {Promise} - Promise object resolving the database item
    */
-  update(deviceId, dict) {
+  update(filter, dict) {
     return this.#model
-      .updateOne({ deviceId }, dict)
+      .updateOne(filter, dict)
       .exec()
       .then(async (result) => {
-        let newDocument = null
-        if (result.matchedCount > 0){
+        let newDocument = null;
+        if (result.matchedCount > 0) {
           //if document with given id exists
-          this.emit("update", {deviceId, ...dict});// emit general update
-          this.emit("update " + deviceId, { deviceId, ...dict }); // emit device specific update
-        }else {
+          this.emit("update", { ...filter, ...dict }); // emit general update
+        } else {
           //if no document with given id exists create a new one
-          newDocument = await this.create({deviceId, ...dict})
+          newDocument = await this.create({ ...filter, ...dict });
         }
-        return {...result, newDocument}
+        return { ...result, newDocument };
       })
       .catch((error) => {
         this.#onError["update"](error, () => {
-          this.update(deviceId, dict);
+          this.update(filter, dict);
         });
       });
   }
   /**
-   * @param {string} deviceId - The id of the device for database lookup
+   * @param {string} filter - The dictionary for lookup
    * @return {Promise} - Promise object represents the database item
    */
-  read(deviceId) {
+  read(filter) {
     return this.#model
-      .find({ deviceId })
+      .find(filter)
       .exec()
       .then((result) => {
         this.emit("read", result);
-        return result
+        return result;
       })
       .catch((error) => {
         this.#onError["read"](error, () => {
-          this.read(deviceId);
+          this.read(filter);
         });
       });
+  }
+  /**
+   * looks at the set returns the id of first object that exists for given dictionary
+   * @param {Object} filter - The dictionary for lookup
+   * @return {Promise} - Promise object represents the database item
+   */
+  async exists(filter) {
+    return await this.#model.exists(filter);
+  }
+
+  /**
+   * looks at the set returns the first object that exists for given dictionary
+   * @param {Object} filter - The dictionary for lookup
+   * @param {string} select - filter for selecting or ignoring fields: add - to front in order to ignore like -_id
+   * @return {Promise} - Promise object represents the database item
+   */
+  async readFirst(filter, select = "") {
+    return await this.#model.findOne(filter).select(select);
+  }
+
+  /**
+   * advanced filtering 
+   * @param {Array} filter - The lookup and filter
+   * @return {Promise} - Promise object represents the database item
+   */
+  async aggregate(filter) {
+    return await this.#model.aggregate(filter)
   }
 }
 

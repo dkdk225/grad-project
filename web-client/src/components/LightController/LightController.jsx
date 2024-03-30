@@ -2,7 +2,9 @@ import "./LightController.css";
 import { useContext } from "react";
 import { requestHandlerContext, eventBusContext } from "../App";
 import { PwmSchedule } from "../common/PwmSchedule";
-function LightController(deviceId) {
+
+
+function LightController({deviceId}) {
   const requestHandler = useContext(requestHandlerContext)
   return (
     <PwmSchedule
@@ -18,10 +20,12 @@ function LightController(deviceId) {
       }}
       deviceId={deviceId}
       onApplySchedule={(schedule) => {
-        requestHandler.update(deviceId, { schedule: schedule.parse() });
+        requestHandler.updateDeviceControl(deviceId, { schedule: schedule.parse() });
       }}
       onMount={(setSchedule) => {
+        console.log(deviceId)
         requestHandler.watch(deviceId, (response) => {
+          console.log(response)
           const parsedPoints = response.data[0].schedule;
           setSchedule((schedule) => {
             return schedule.buildPointStorage(parsedPoints);

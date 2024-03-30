@@ -4,11 +4,11 @@ class AjaxHandler extends RequestHandler {
   constructor() {
     super();
   }
-  update(id, dict) {
-    postRequest({ id, ...dict }, `/api/device/update`);
+  updateDeviceControl(deviceId, dict) {
+    postRequest({ deviceId, ...dict }, `/api/device-control/update`);
   }
   watch(id, onUpdate) {
-    getRequest(`/api/device/${id}`).then(onUpdate);
+    getRequest(`/api/device-control/${id}`).then(onUpdate);
   }
 }
 export { AjaxHandler };

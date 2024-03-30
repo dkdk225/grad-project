@@ -7,7 +7,7 @@ class SocketHandler extends RequestHandler {
     super();
     this.#socket = io(this.url);
   }
-  update(id, dictionary) {
+  updateDeviceControl(id, dictionary) {
     this.#socket.emit("update", id, dictionary);
   }
   watch(id, onUpdate) {

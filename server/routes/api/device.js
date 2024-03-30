@@ -1,24 +1,39 @@
 const { Router } = require("express");
-const { lightController } = require("../../light-controller");
-const {eventBus} = require("../../event-bus")
-const device = Router({
+const { device, user } = require("../../db");
+const bcrypt = require("bcrypt");
+
+const deviceRouter = Router({
   caseSensitive: true,
 });
 
-device.get("/api/device/:id/", async (req, res) => {
-  const data = await lightController.read(req.params.id);
-  res.status(200);
-  res.send(data);
-});
-
-//use update to create objects
-device.post("/api/device/update", async (req, res) => {
-  const deviceId = req.body.id
-  delete req.body.id
-  lightController.update(deviceId,req.body).then((document) => {
-    eventBus.emit("web-client/update", { deviceId, ...req.body });
+deviceRouter.post("/api/device/update", (req, res) => {
+  const deviceId = req.body.deviceId;
+  const password = bcrypt.hashSync(req.body.password, 10);
+  device.exists({ deviceId }).then((result) => {
+    if (result) {
+      device.update({ deviceId }, { password }).then((document) => {
+        res.sendStatus(200);
+      });
+    } else {
+      res.status(403);
+      res.send("device doesn't exist");
+    }
   });
-  res.sendStatus(200);
 });
 
-module.exports = device;
+deviceRouter.post("/api/device/create", async (req, res) => {
+  const deviceId = req.body.deviceId;
+  const password = bcrypt.hashSync(req.body.password, 10);
+  device.exists({ deviceId }).then((result) => {
+    if (!result) {
+      device.create({ deviceId, password }).then((document) => {
+        res.sendStatus(200);
+      });
+    } else {
+      res.status(403);
+      res.send("device already exists");
+    }
+  });
+});
+
+module.exports = deviceRouter;
