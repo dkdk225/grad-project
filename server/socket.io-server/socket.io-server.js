@@ -27,7 +27,7 @@ function startSocketIOServer(app) {
     });
     socket.on("update", (deviceId, dict) => {
       eventBus.emit("web-client/update", { deviceId, ...dict });
-      lightController.update(deviceId, { ...dict});
+      lightController.update({deviceId}, { ...dict});
     });
     socket.on("watch", (deviceId) => {
       //change the watch to listen to mqtt and update when mqtt updates

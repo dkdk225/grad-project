@@ -30,8 +30,4 @@ const device = new MongoManager({
   },
 });
 
-device.on("update", (update) => {
-  console.log("object updated " + update.deviceId);
-});
-
 module.exports = device;

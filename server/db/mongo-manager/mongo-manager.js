@@ -127,6 +127,15 @@ class MongoManager extends EventEmitter {
   async readFirst(filter, select = "") {
     return await this.#model.findOne(filter).select(select);
   }
+
+  /**
+   * advanced filtering 
+   * @param {Array} filter - The lookup and filter
+   * @return {Promise} - Promise object represents the database item
+   */
+  async aggregate(filter) {
+    return await this.#model.aggregate(filter)
+  }
 }
 
 module.exports = MongoManager;

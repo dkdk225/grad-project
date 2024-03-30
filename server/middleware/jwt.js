@@ -5,15 +5,13 @@ module.exports = function () {
     console.log("JWT");
     req.jwt = false;
     req.jwtSender = null;
-
     const auth = req.get("Authorization");
-    console.log(auth)
     if (auth) {
       try {
         const token = auth.substring(7);
         const sender = JWTController.validateJWT(token);
-        console.log(sender)
         if (sender) {
+          req.jwtSender = sender
           next()
           return
         }

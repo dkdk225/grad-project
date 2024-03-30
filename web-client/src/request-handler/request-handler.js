@@ -7,11 +7,11 @@ class RequestHandler {
     this.url = server.url;
   }
   /**
-   * 
-   * @param {string} id 
-   * @param {Object} dictionary 
+   *
+   * @param {string} id
+   * @param {Object} dictionary
    */
-  update(id, dictionary) {
+  updateDeviceControl(id, dictionary) {
     throw Error("update method not implemented");
   }
   watch(id, body) {
