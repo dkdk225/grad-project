@@ -9,9 +9,10 @@ const userRouter = Router({
 
 //use update to create objects
 userRouter.post("/api/user/login", (req, res) => {
-  const { userId, password } = req.body;
+  const userId = req.body.userName;
+  const password = req.body.password;
   user.readFirst({ userId }, "-devices").then((result) => {
-    if (result || bcrypt.compareSync(password, result.password)) {
+    if (result && bcrypt.compareSync(password, result.password)) {
       //create a session for user
       const credentials = {
         userId,
@@ -27,7 +28,9 @@ userRouter.post("/api/user/login", (req, res) => {
 });
 
 userRouter.post("/api/user/create", (req, res) => {
-  const { userId, password, userName } = req.body;
+  const userId = req.body.userName;
+  const password = req.body.password;
+  const userName = req.body.name;
   user.exists({ userId }).then((result) => {
     if (result) {
       res.status(400);
@@ -44,6 +47,7 @@ userRouter.post("/api/user/create", (req, res) => {
     }
   });
 });
+
 userRouter.get("/api/user/devices", (req, res) => {
   const userId = req.jwtSender.userId;
   user.readFirst({ userId }, "devices").then((result) => {
@@ -58,26 +62,26 @@ userRouter.get("/api/user/devices", (req, res) => {
 
 userRouter.post("/api/user/devices/create", (req, res) => {
   const userId = req.jwtSender.userId;
-  const { deviceId, password } = req.body;
-  res.status(403)
+  const { deviceId, password, name } = req.body;
+  res.status(403);
   user.exists({ userId, "devices.deviceId": deviceId }).then((result) => {
     if (!result) {
       device.readFirst({ deviceId }).then((deviceDocument) => {
         if (!deviceDocument) {
-          res.send("no such device exists")
-          return
+          res.send("no such device exists");
+          return;
         }
-          const salt = deviceDocument.password.substring(0, 29);
-          const device = {
-            deviceId,
-            password: bcrypt.hashSync(password, salt),
-          };
-          user
-            .update({ userId }, { $push: { devices: device } })
-            .then((document) => {
-              res.sendStatus(200);
-            });
-        
+        const salt = deviceDocument.password.substring(0, 29);
+        const device = {
+          deviceId,
+          name,
+          password: bcrypt.hashSync(password, salt),
+        };
+        user
+          .update({ userId }, { $push: { devices: device } })
+          .then((document) => {
+            res.sendStatus(200);
+          });
       });
     } else {
       res.send("device already exists");
