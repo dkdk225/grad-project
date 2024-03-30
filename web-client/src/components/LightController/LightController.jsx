@@ -23,7 +23,6 @@ function LightController({deviceId}) {
         requestHandler.updateDeviceControl(deviceId, { schedule: schedule.parse() });
       }}
       onMount={(setSchedule) => {
-        console.log(deviceId)
         requestHandler.watch(deviceId, (response) => {
           console.log(response)
           const parsedPoints = response.data[0].schedule;
