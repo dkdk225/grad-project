@@ -1,0 +1,41 @@
+.device-card{
+  width: 100%;
+  position: relative;
+  height:5em;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content:end;
+  align-items: center;
+  box-shadow: 0 0px 5px 0px var(--border-color);
+  padding: 0 1em 0 1em;
+}
+
+.device-card-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top:2em;
+  margin-bottom: 4em;
+}
+
+
+.device-card-list_element{
+  padding: 0;
+  margin: 0;
+  margin-bottom:1em;
+}
+
+.device-card_title{
+  position: absolute;
+  left:1em;
+  font-size: 2em;
+  font-family: sans-serif;
+  color: rgba(0, 0, 0, 0.4)
+}
+
+.device-card_add-button{
+  position: fixed !important;
+  right: 1em;
+  bottom: 1em;
+}
