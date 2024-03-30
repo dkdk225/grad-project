@@ -44,6 +44,17 @@ userRouter.post("/api/user/create", (req, res) => {
     }
   });
 });
+userRouter.get("/api/user/devices", (req, res) => {
+  const userId = req.jwtSender.userId;
+  user.readFirst({ userId }, "devices").then((result) => {
+    
+    res.status(200);
+    res.send(result.devices.map(device=>{
+      const { deviceId, name } = device;
+      return {deviceId, name}
+    }));
+  });
+});
 
 userRouter.post("/api/user/devices/create", (req, res) => {
   const userId = req.jwtSender.userId;
