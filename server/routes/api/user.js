@@ -117,26 +117,33 @@ userRouter.post("/api/user/devices/remove", (req, res) => {
 });
 
 userRouter.post("/api/user/devices/update", (req, res) => {
+  res.status(403);
   const userId = req.jwtSender.userId;
-  const { deviceId, newDeviceId } = req.body;
-  const password = bcrypt.hashSync(req.body.password, 10);
+  const { deviceId, newDeviceId, name } = req.body;
   user.exists({ userId, "devices.deviceId": deviceId }).then((result) => {
     if (result) {
+      device.readFirst({ deviceId }).then((deviceDocument) => {
+        if (!deviceDocument) {
+          res.send("no such device exists");
+          return;
+        }
+        const salt = deviceDocument.password.substring(0, 29);
       user
         .update(
           { "devices.deviceId": deviceId },
           {
             $set: {
               "devices.$.deviceId": newDeviceId,
-              "devices.$.password": password,
+                "devices.$.password": bcrypt.hashSync(req.body.password, salt),
+                "devices.$.name": name,
             },
           }
         )
         .then((document) => {
           res.sendStatus(200);
+          });
         });
     } else {
-      res.status(403);
       res.send("device doesn't exist");
     }
   });
