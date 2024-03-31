@@ -1,21 +1,21 @@
 import "./Devices.css";
 import { Button, IconButton, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { getRequest } from "../../../requests";
+import { useContext, useEffect, useState } from "react";
+import { getRequest, postRequest } from "../../../requests";
 import { useNavigate } from "react-router";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AddIcon from "@mui/icons-material/Add";
 import { paths } from "../../../requests/paths";
-const {client, api} = paths
+import { deleteRequest } from "../../../requests/requests";
+const { client, api } = paths;
 
 function Devices() {
   const [devices, setDevices] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
-    getRequest("/api/user/devices").then((result) => {
-      console.log(result.data);
+    getRequest(api.userDevices).then((result) => {
       if (result.data.length > 0) setDevices(result.data);
     });
   }, []);
@@ -34,9 +34,11 @@ function Devices() {
                   <div className="device-card_button-container">
                     <Tooltip title="Settings and remote control">
                       <IconButton
-                        onClick={() => {
-                          navigate(`${client.devices}${deviceId}`);
-                        }}
+                        onClick={() =>
+                          navigate(`${client.devices}${deviceId}`, {
+                            state: { name, deviceId },
+                          })
+                        }
                         aria-label="settings"
                       >
                         <SettingsIcon />
@@ -44,13 +46,33 @@ function Devices() {
                     </Tooltip>
 
                     <Tooltip title="Edit connection settings">
-                      <IconButton aria-label="edit">
+                      <IconButton
+                        aria-label="edit"
+                        onClick={() => {
+                          navigate(client.updateUserDevice(deviceId), {
+                            state: { name, deviceId },
+                          });
+                        }}
+                      >
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
 
                     <Tooltip title="Delete">
-                      <IconButton>
+                      <IconButton
+                        onClick={() => {
+                          deleteRequest(
+                            { deviceId },
+                            api.removeUserDevice
+                          ).then((result) => {
+                            setDevices((devices) =>
+                              devices.filter(
+                                (device) => device.deviceId !== deviceId
+                              )
+                            );
+                          });
+                        }}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -67,7 +89,7 @@ function Devices() {
         variant="contained"
         className="device-card_add-button"
         startIcon={<AddIcon />}
-        onClick={()=>navigate(client.addDeviceToUser)}
+        onClick={() => navigate(client.addDeviceToUser)}
       >
         Add
       </Button>
