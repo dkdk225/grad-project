@@ -1,5 +1,6 @@
 import axios from "axios";
 import { server } from "../config";
+import { PassUserProvider } from "../components/App";
 
 /**
  * Send an post request to specified path
@@ -17,9 +18,29 @@ const postRequest = (data, path = null) => {
     headers: {
       Authorization: "Bearer " + jwt,
     },
+  }).catch((err) => {
+    console.log(err);
+    if (err.status === 403 && err.response.data === "False JWT")
+      PassUserProvider.reset();
   });
 };
 
+const deleteRequest = (data, path = null) => {
+  const url = path ? server.url + path : server.url;
+  const jwt = localStorage.getItem("JWT");
+  return axios({
+    method: "delete",
+    url: url,
+    data: data,
+    headers: {
+      Authorization: "Bearer " + jwt,
+    },
+  }).catch((err) => {
+    console.log(err);
+    if (err.status === 403 && err.response.data === "False JWT")
+      PassUserProvider.reset();
+  });
+};
 
 /**
  * Send an post request to specified path
@@ -35,8 +56,11 @@ const getRequest = (path = null) => {
     headers: {
       Authorization: "Bearer " + jwt,
     },
+  }).catch((err) => {
+    console.log(err);
+    if (err.status === 403 && err.response.data === "False JWT")
+      PassUserProvider.reset();
   });
 };
 
-
-export { postRequest, getRequest };
+export { postRequest, getRequest, deleteRequest };
