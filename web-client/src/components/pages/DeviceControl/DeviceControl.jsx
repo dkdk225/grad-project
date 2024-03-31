@@ -1,12 +1,32 @@
 import "./DeviceControl.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { LightController } from "../../LightController";
-const deviceId = "custom id 2";
+import { IconButton, Tooltip } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { paths } from "../../../requests/paths";
+const { client, api } = paths;
+
 function DeviceControl() {
-  const {deviceId} = useParams()
-  console.log(deviceId)
+  const { deviceId } = useParams();
+  const name = useLocation().state ? useLocation().state.name : "";
+  const navigate = useNavigate();
   return (
-    <LightController deviceId={deviceId}></LightController>
+    <div className="device-control">
+      <Tooltip title="Edit connection settings">
+        <IconButton
+          className="device-control_edit-button"
+          aria-label="edit"
+          onClick={() => {
+            navigate(client.updateUserDevice(deviceId), {
+              state: { name, deviceId },
+            });
+          }}
+        >
+          <EditIcon />
+        </IconButton>
+      </Tooltip>
+      <LightController deviceId={deviceId}></LightController>
+    </div>
   );
 }
 
