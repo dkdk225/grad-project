@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext } from "react";
 import "./App.css";
 import "./common.css";
 import { EventEmitter } from "events";
@@ -7,8 +7,13 @@ const eventBusContext = createContext(eventBus);
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { RequestHandler } from "../../request-handler";
-import { LightController } from "../LightController";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
+import { UserProvider } from "./UserProvider";
+
 import {
   Login,
   DeviceControl,
@@ -16,38 +21,11 @@ import {
   Navbar,
   Redirect,
   Devices,
+  UpdateUserDevice,
+  AddDeviceToUser,
 } from "../pages";
 import { paths } from "../../requests/paths";
-import { AddDeviceToUser } from "../pages/AddDeviceToUser";
-const {client, api} = paths
-
-const router = createBrowserRouter([
-  {
-    path: client.login,
-    element: <Login></Login>,
-  },
-  {
-    path: client.createAccount,
-    element: <CreateAccount></CreateAccount>,
-  },
-  {
-    path: client.addDeviceToUser,
-    element: <AddDeviceToUser></AddDeviceToUser>,
-  },
-  {
-    path: client.devices,
-    element: <Devices></Devices>,
-  },
-  {
-    path: client.deviceControl,
-    element: <DeviceControl></DeviceControl>,
-  },
-  // {
-  //   path: "*",
-  //   element: <Redirect></Redirect>,
-  // },
-]);
-
+const { client, api } = paths;
 const requestHandler = new RequestHandler();
 const requestHandlerContext = createContext(requestHandler);
 
@@ -57,8 +35,21 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <requestHandlerContext.Provider value={requestHandler}>
           <eventBusContext.Provider value={eventBus}>
-            <Navbar></Navbar>
-            <RouterProvider router={router} />
+            <Router>
+              <UserProvider>
+                <Navbar></Navbar>
+                <Routes>
+                  <Route path={client.login} element={<Login/>}></Route>
+                  <Route path={client.createAccount} element={<CreateAccount/>}></Route>
+                  <Route path={client.addDeviceToUser} element={<AddDeviceToUser/>}></Route>
+                  <Route path={client.devices} element={<Devices/>}></Route>
+                  <Route path={client.deviceControl} element={<DeviceControl/>}></Route>
+                  <Route path={client.updateUserDevice(client.extension.deviceId)} element={<UpdateUserDevice/>}></Route>
+                  {/* <Route path={"*"} element={<Redirect/>}></Route> */}
+                </Routes>
+              </UserProvider>
+            </Router>
+
           </eventBusContext.Provider>
         </requestHandlerContext.Provider>
       </LocalizationProvider>
