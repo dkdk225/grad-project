@@ -57,12 +57,21 @@ userRouter.post("/api/user/create", (req, res) => {
 userRouter.get("/api/user/devices", (req, res) => {
   const userId = req.jwtSender.userId;
   user.readFirst({ userId }, "devices").then((result) => {
-    
     res.status(200);
-    res.send(result.devices.map(device=>{
-      const { deviceId, name } = device;
-      return {deviceId, name}
-    }));
+    res.send(
+      result.devices.map((device) => {
+        const { deviceId, name } = device;
+        return { deviceId, name };
+      })
+    );
+  });
+});
+
+userRouter.get("/api/user-info", (req, res) => {
+  const userId = req.jwtSender.userId;
+  user.readFirst({ userId }, "-devices -password -_id").then((result) => {
+    res.status(200);
+    res.send(result);
   });
 });
 
@@ -95,7 +104,7 @@ userRouter.post("/api/user/devices/create", (req, res) => {
   });
 });
 
-userRouter.post("/api/user/devices/remove", (req, res) => {
+userRouter.delete("/api/user/devices/remove", (req, res) => {
   const userId = req.jwtSender.userId;
   const { deviceId } = req.body;
   const device = {
@@ -128,21 +137,21 @@ userRouter.post("/api/user/devices/update", (req, res) => {
           return;
         }
         const salt = deviceDocument.password.substring(0, 29);
-      user
-        .update(
-          { "devices.deviceId": deviceId },
-          {
-            $set: {
-              "devices.$.deviceId": newDeviceId,
+        user
+          .update(
+            { "devices.deviceId": deviceId },
+            {
+              $set: {
+                "devices.$.deviceId": newDeviceId,
                 "devices.$.password": bcrypt.hashSync(req.body.password, salt),
                 "devices.$.name": name,
-            },
-          }
-        )
-        .then((document) => {
-          res.sendStatus(200);
+              },
+            }
+          )
+          .then((document) => {
+            res.sendStatus(200);
           });
-        });
+      });
     } else {
       res.send("device doesn't exist");
     }
