@@ -21,6 +21,7 @@ module.exports = function () {
       }
     }
     res.status(403)
+    res.send("False JWT")
     res.end()
   };
 };
