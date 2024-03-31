@@ -27,6 +27,12 @@ userRouter.post("/api/user/login", (req, res) => {
   });
 });
 
+userRouter.post("/api/user/logout", (req, res)=>{
+  
+  JWTController.removeJWT(req.body.token)
+  res.sendStatus(200)
+})
+
 userRouter.post("/api/user/create", (req, res) => {
   const userId = req.body.userName;
   const password = req.body.password;
