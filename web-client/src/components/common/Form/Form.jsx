@@ -1,5 +1,5 @@
 import "./Form.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
 
 const handleChange = (setValue) => {
@@ -12,11 +12,11 @@ const handleSubmit = (states, onSubmit, fields) => {
     let formField = field.replace(/\W+(.)/g, function (match, chr) {
       return chr.toUpperCase();
     });
-    formField = formField.charAt(0).toLowerCase() + formField.slice(1)
+    formField = formField.charAt(0).toLowerCase() + formField.slice(1);
     formDict[formField] = states[field].value;
   }
   return (e) => {
-    e.preventDefault()
+    e.preventDefault();
     onSubmit(formDict);
   };
 };
@@ -24,6 +24,7 @@ const handleSubmit = (states, onSubmit, fields) => {
 function Form({
   fields = [],
   onSubmit = (formDict) => {},
+  onMount = (states) => {},
   submitName = "Submit",
   className = "",
 }) {
@@ -32,9 +33,15 @@ function Form({
     const [value, setValue] = useState("");
     states[field] = { value, setValue };
   }
+  useEffect(() => {
+    onMount(states);
+  }, []);
   return (
     <>
-      <form onSubmit={handleSubmit(states, onSubmit, fields)} className={"form " + className}>
+      <form
+        onSubmit={handleSubmit(states, onSubmit, fields)}
+        className={"form " + className}
+      >
         {fields.map((field, index) => {
           const { value, setValue } = states[field];
           let type = "";
