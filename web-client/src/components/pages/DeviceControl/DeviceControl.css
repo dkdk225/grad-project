@@ -1,0 +1,11 @@
+.device-control{
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top:2em;
+}
+.device-control_edit-button{
+  position: absolute !important;
+  right: 1em !important;
+  top: 0em !important;
+}

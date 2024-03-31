@@ -2,7 +2,8 @@ const { MongoManager } = require("../mongo-manager");
 const mongoose = require("mongoose");
 
 const device = new mongoose.Schema({
-  deviceId: { type: String, unique: true },
+  deviceId: { type: String },
+  name: { type: String },
   password: { type: String },
 });
 
@@ -25,10 +26,7 @@ const user = new MongoManager({
   schema: userSchema,
   onError: {
     create: (error, recall) => {
-      //11000 is the error code for duplication
-      if (error.code !== 11000) {
-        recall();
-      }
+      console.log(error)
     },
     update: (error, recall) => {
       console.log(error);

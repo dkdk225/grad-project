@@ -10,8 +10,7 @@ const deviceControl = Router({
 deviceControl.post("/api/device-control/update", async (req, res) => {
   const deviceId = req.body.deviceId;
   delete req.body.deviceId;
-  const userId = "some value2";
-  // const userId = req.body.sender.userId
+  const userId = req.jwtSender.userId;
   user
     .aggregate([
       {

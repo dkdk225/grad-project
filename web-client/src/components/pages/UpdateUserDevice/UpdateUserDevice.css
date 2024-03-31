@@ -1,0 +1,12 @@
+.update-device-form {
+  width: 100%;
+}
+@media screen and (width > 600px) {
+  .update-device-form {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+  }
+}

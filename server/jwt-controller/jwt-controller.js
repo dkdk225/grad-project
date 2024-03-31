@@ -22,7 +22,9 @@ class JWTController {
     this.#tokens.set(token, secretKey);
     return token;
   }
-
+  removeJWT(token){
+    this.#tokens.delete(token)
+  }
   validateJWT(token) {
     const secretKey = this.#tokens.get(token);
     if (!secretKey) throw Error("No such token");

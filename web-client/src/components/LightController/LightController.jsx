@@ -3,9 +3,8 @@ import { useContext } from "react";
 import { requestHandlerContext, eventBusContext } from "../App";
 import { PwmSchedule } from "../common/PwmSchedule";
 
-
-function LightController({deviceId}) {
-  const requestHandler = useContext(requestHandlerContext)
+function LightController({ deviceId }) {
+  const requestHandler = useContext(requestHandlerContext);
   return (
     <PwmSchedule
       colorMapping={{
@@ -20,12 +19,12 @@ function LightController({deviceId}) {
       }}
       deviceId={deviceId}
       onApplySchedule={(schedule) => {
-        requestHandler.updateDeviceControl(deviceId, { schedule: schedule.parse() });
+        requestHandler.updateDeviceControl(deviceId, {
+          schedule: schedule.parse(),
+        });
       }}
       onMount={(setSchedule) => {
-        console.log(deviceId)
         requestHandler.watch(deviceId, (response) => {
-          console.log(response)
           const parsedPoints = response.data[0].schedule;
           setSchedule((schedule) => {
             return schedule.buildPointStorage(parsedPoints);
