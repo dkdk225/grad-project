@@ -21,14 +21,30 @@ function buildWifiList(list) {
     wifiList.appendChild(node);
   }
 }
-
+const settingsContainer = document.querySelector(".settings-container");
 document.querySelector(".refresh-button").addEventListener("click", (e) => {
+  updateWifiList();
+});
+document.querySelector(".settings-button").addEventListener("click", (e)=>{
+  showSettings()
+});
+settingsContainer.addEventListener("click", (e)=>{
+  
+  console.log(e.target)
+  console.log(e.target == settingsContainer)
+  if(e.target == settingsContainer){
+    hideSettings()
+  }
+})
+
+
+function updateWifiList() {
   console.log("refresh");
   xhr("GET", "/connections", (response) => {
     const wifis = response.split(",");
     buildWifiList(wifis);
   });
-});
+}
 
 function xhr(method, path, callback, body = null) {
   const xhr = new XMLHttpRequest();
@@ -42,3 +58,14 @@ function xhr(method, path, callback, body = null) {
   };
   xhr.send(body);
 }
+
+function showSettings(){
+  document.querySelector(".settings-container").style.display = "flex";
+}
+
+function hideSettings() {
+  document.querySelector(".settings-container").style.display = "none";
+}
+
+
+updateWifiList()
