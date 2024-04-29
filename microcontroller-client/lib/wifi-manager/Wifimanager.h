@@ -10,5 +10,5 @@ public:
 
   }
   void to_AP();
-  void to_STA(const char* ssid, const char* password);
+  static void to_STA(const char* ssid, const char* password);
 };

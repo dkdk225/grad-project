@@ -5,11 +5,21 @@
 #include <cstring>
 #include "Arrayutils.h"
 #include "Mqttmanager.h"
-#include <WebServer.h>
 #include <Wifimanager.h>
+#include "Webserver.h"
+#include <esp_task_wdt.h> 
+#include "Loopmanager.h"
 using namespace std;
 const char* ssid = "Wubba-Lubba-Dub-Dub";
 const char* password = "denis-has-w1f1";
+
+
+
+
+
+
+
+
 
 
 
@@ -47,28 +57,47 @@ PubSubClient client(espClient);
 PubSubClient *client_pointer = &client;
 MqttManager mqtt(id, topic, mqtt_server, mqtt_port, client_pointer);
 WifiManager wifiManager(ssid_ap, password_ap);
-WebServer server(80);
-void test();
+
+
 void setup() {
   Serial.begin(115200);
-  Controller controller(id, 1);
-  wifiManager.to_AP();
+  esp_task_wdt_init(10, true); 
   mqtt.start();
+  Controller controller(id, 1);
+  // wifiManager.to_STA(ssid, password);
+  wifiManager.to_AP();
   Serial.println(WiFi.softAPIP());
-  Serial.println(WiFi.localIP());
-  server.on("/", test);
-  server.begin();
+  WebServer::start();
 }
 
 void loop() {
-  
+  esp_task_wdt_reset(); 
   delay(100);
-  server.handleClient();
   // mqtt.monitor();
 }
 
-void test () {
-  Serial.println("A CALLL");
-  server.send(200, "text/html", "hello world");
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
