@@ -8,18 +8,13 @@ class MqttManager {
   const char* mqtt_server;
   const int mqtt_port;
   PubSubClient* client;
-  char *device_id;
+  const char* device_id;
   char *topic;
 
 public:
-  MqttManager(char* device_id, char* topic, const char* mqtt_server, const int mqtt_port, PubSubClient* client):mqtt_port(mqtt_port), mqtt_server(mqtt_server){
+  MqttManager(char* topic, const char* mqtt_server, const int mqtt_port, PubSubClient* client):mqtt_port(mqtt_port), mqtt_server(mqtt_server){
     this->client = client;
-    this->device_id = device_id;
     this->topic = topic;
-    Serial.println(mqtt_server);
-    Serial.println(mqtt_port);
-
-
   };
   void reconnect();
   void subscribe();

@@ -1,10 +1,13 @@
 #include "Mqttmanager.h"
 #include "Arrayutils.h"
 
+
 void MqttManager::reconnect(){
   while (!client->connected()) {
     Serial.print("Attempting MQTT connection...");
-    if (client->connect(device_id, NULL, NULL)) {
+    String clientId = "ESP32Client-";
+    clientId += String(random(0xffffff), HEX);
+    if (client->connect(clientId.c_str(), NULL, NULL)) {
       Serial.println("connected");
       subscribe();
       Serial.println("subscribed");
@@ -27,11 +30,13 @@ void MqttManager::callback(char* topic, byte* payload, unsigned int length) {
 }
 
 void MqttManager::subscribe(){
-  client->subscribe(ArrayUtils::concat(topic, device_id));
+  String full_topic = String(topic) + WiFi.macAddress();
+  client->subscribe(full_topic.c_str());
 }
 
 void MqttManager::publish(char * payload) {
-  client->publish(ArrayUtils::concat(topic, device_id), payload);
+  String full_topic = String(topic) + WiFi.macAddress();
+  client->publish(full_topic.c_str(), payload);
 }
 
 void MqttManager::monitor() {
