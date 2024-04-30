@@ -22,16 +22,20 @@ deviceRouter.post("/api/device/update", (req, res) => {
 });
 
 deviceRouter.post("/api/device/create", async (req, res) => {
+  console.log("create device req");
   const deviceId = req.body.deviceId;
   const password = bcrypt.hashSync(req.body.password, 10);
   device.exists({ deviceId }).then((result) => {
     if (!result) {
+      //creates a new device
       device.create({ deviceId, password }).then((document) => {
         res.sendStatus(200);
       });
     } else {
-      res.status(403);
-      res.send("device already exists");
+      //if device already exists updates the device
+      device.update({ deviceId }, { password }).then((document) => {
+        res.sendStatus(200);
+      });
     }
   });
 });
