@@ -1,6 +1,9 @@
 #include <string>
 #include <PubSubClient.h>
 #include <WiFi.h>
+
+#include <ArduinoJson.h>
+#include <iostream>
 using namespace std;
 
 
@@ -21,6 +24,7 @@ public:
   void publish(char* payload);
   void monitor();
   void start();
+  static string getPayload(byte *data, unsigned int len);
   PubSubClient getClient();
   static void callback(char* topic, byte* payload, unsigned int length);
 };

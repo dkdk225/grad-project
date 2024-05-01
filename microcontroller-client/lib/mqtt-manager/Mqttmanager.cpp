@@ -1,6 +1,6 @@
 #include "Mqttmanager.h"
 #include "Arrayutils.h"
-
+#include "Controller.h"
 
 void MqttManager::reconnect(){
   while (!client->connected()) {
@@ -19,14 +19,24 @@ void MqttManager::reconnect(){
     }
   }
 }
+
+string  MqttManager::getPayload(byte*data, unsigned int len) {
+  string payload;
+  for (size_t i = 0; i < len; i++) {
+    payload += static_cast<char>(data[i]);
+  }
+  return payload;
+}
+
 void MqttManager::callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
+  JsonDocument doc;
+  string jsonString = getPayload(payload, length);
+  std::cout << jsonString << std::endl;
+  deserializeJson(doc, jsonString);
+  Controller::getInstance()->update(doc);
 }
 
 void MqttManager::subscribe(){
@@ -51,6 +61,7 @@ void MqttManager::start() {
   client->setServer(mqtt_server, mqtt_port);
   client->setCallback(MqttManager::callback);
 }
+
 
 PubSubClient MqttManager::getClient(){
   return *client;
