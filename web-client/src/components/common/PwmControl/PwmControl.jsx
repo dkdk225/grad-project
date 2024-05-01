@@ -17,7 +17,6 @@ function PwmControl({ deviceId, color,value, className = null, onPwmUpdate = nul
     setPwm(max);
     return max;
   };
-
   return (
     <div className={className ? className : ""}>
       <Box className="pwm-input__container">

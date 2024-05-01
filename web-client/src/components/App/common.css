@@ -7,6 +7,7 @@ body {
 :root {
   --border-color: rgba(0, 0, 0, 0.2);
   --big-text-color: rgba(0, 0, 0, 0.6);
+  --primary-color:rgb(33, 150, 243);
 }
 
 .text {

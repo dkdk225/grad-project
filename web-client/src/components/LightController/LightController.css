@@ -1,0 +1,22 @@
+.mode-switch-container{
+  position: fixed;
+  bottom:4em;
+  right: 1em;
+}
+
+
+
+.active-control-mode{
+  color:var(--primary-color);
+  
+}
+
+.mode-switch__label{
+  transition: 100ms;
+  text-align: center;
+}
+
+.mode-switch-container{
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,46 @@
+.pwm-list{
+  display: inline-block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-top: 2em;
+}
+.pwm-list__control{
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0em 1em 0em 0em
+}
+.pwm-point-set__time{
+  width: 9em;
+}
+.pwm-manual{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  min-width: 25em;
+  width: 80%;
+  max-width: 60em;
+}
+.pwm-point-set{
+  margin-top:2em;
+  padding-bottom: 2em ;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4)
+}
+.pwm-point-set__actions{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom:1em;
+  padding: 0.5em;
+  box-shadow: 0em 0.3em 0.2em -0.4em;
+}
+.pwm-point-set__delete{
+  color: rgb(0, 0, 0, 0.4) !important;
+}
+.pwm-point-set__delete-icon{
+  font-size: 2rem !important;
+}
+.manual-apply-button{
+  margin-top: 3em !important;
+}
