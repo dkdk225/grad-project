@@ -3,6 +3,8 @@
 #include <vector>
 #include <ArduinoJson.h>
 #include <iostream>
+#include <Ntptimemanager.h>
+
 
 using namespace std;
 class SchedulePoint{
@@ -13,6 +15,8 @@ class SchedulePoint{
       this->time = time;
       this->pwm = pwm;
     }
+    int getTime();
+    int getPwm();
 };
 
 class Controller {
@@ -22,29 +26,42 @@ class Controller {
   std::map<string, int> manual; //manual mode settings
   std::map<string, vector<SchedulePoint>> schedule;
   vector<int> timeVec;
-  
+  vector<string> fields;
+  std::map<string, int> pin_map;
 
 private:
   // Static instance pointer
   static Controller* instance;
 
   // Private constructor to prevent instantiation from outside the class
-  Controller()
-  {
-    this->mode = 1;
+  Controller() {
+    this->mode = 0;
     this->manual = this->defaultManual();
     this->schedule = this->defaultSchedule();
-    }
+    this->timeVec = this->defaultTimeVec();
+    this->next_time_point_index = 0;
+    this->fields = this->defaultFields();
+    this->pin_map = this->defaultPinMap();
+    this->setupChannels();
+  }
 
-    // Delete copy constructor to prevent copying
-    Controller(const Controller&) = delete;
-    Controller& operator=(const Controller&) = delete;
+  // Delete copy constructor to prevent copying
+  Controller(const Controller&) = delete;
+  Controller& operator=(const Controller&) = delete;
+  void setupChannels();
 
-
-  public:
-    std::map<string, int> defaultManual();
-    std::map<string, vector<SchedulePoint>> defaultSchedule();
-    void update(JsonDocument doc);
-    static Controller *getInstance();
+public:
+  static Controller *getInstance();
+  std::map<string, int> defaultManual();
+  std::map<string, vector<SchedulePoint>> defaultSchedule();
+  std::vector<int> defaultTimeVec();
+  std::vector<string> defaultFields();
+  std::map<string, int> defaultPinMap();
+  void updateSchedule(JsonObject scheduleJsonObj);
+  void update(JsonDocument doc);
+  void executeSchedule();
+  void executeManual();
+  void executeState();
+  void setFields(vector<string> fields);
 };
 

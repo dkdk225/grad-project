@@ -1,4 +1,7 @@
 #include <WiFi.h>
+#include <Ntptimemanager.h>
+#include <Mqttmanager.h>
+
 
 class WifiManager {
   const char *device_ssid;

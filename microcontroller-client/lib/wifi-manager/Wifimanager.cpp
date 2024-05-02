@@ -1,5 +1,4 @@
 #include "Wifimanager.h"
-#include <WiFi.h>
 
 void WifiManager::to_AP(){
   WiFi.disconnect(true);
@@ -33,7 +32,8 @@ void WifiManager::to_STA(const char* ssid, const char* password){
     delay(500);
     Serial.print(".");
   }
-
+  NTPTimeManager::getClient()->begin();
+  MqttManager::getInstance()->start();
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");

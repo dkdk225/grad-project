@@ -33,12 +33,15 @@ document.querySelector(".settings-button").addEventListener("click", (e) => {
 });
 document.querySelector(".settings__button").addEventListener("click", (e) => {
   console.log("posting password");
-  const password = document.querySelector(".settings__password").value;
+  const passwordField = document.querySelector(".settings__password");
+  const password = passwordField.value;
+  passwordField.value = "";
   xhr(
     "POST",
     "/set-device-password",
     (response) => {
       console.log(response);
+      hideSettings();
     },
     JSON.stringify({ password })
   );

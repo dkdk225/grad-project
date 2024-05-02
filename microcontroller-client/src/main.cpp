@@ -8,14 +8,15 @@
 #include <Wifimanager.h>
 #include "Webserver.h"
 #include <esp_task_wdt.h> 
-#include "Loopmanager.h"
+#include <Ntptimemanager.h>
+
+
 using namespace std;
 const char* ssid = "Wubba-Lubba-Dub-Dub";
 const char* password = "denis-has-w1f1";
 
 
 
-const char *id = WiFi.macAddress().c_str();
 const char* ssid_ap = "AP mode 567562";
 const char* password_ap = "admintest";
 
@@ -31,99 +32,65 @@ char *topic = topic_string;
 WiFiClient espClient;
 PubSubClient client(espClient);
 PubSubClient *client_pointer = &client;
-MqttManager mqtt(topic, mqtt_server, mqtt_port, client_pointer);;
+MqttManager* mqtt = MqttManager::createInstance(topic, mqtt_server, mqtt_port, client_pointer);
 WifiManager wifiManager(ssid_ap, password_ap);
 
 
+void each_loop();
+void every_ten_loops();
+
 void setup() {
-  Serial.begin(115200);
-  id = WiFi.macAddress().c_str();
-  
-  Serial.println("print id----------------");
-  Serial.println(id);
-  Serial.println(*id);
-  Serial.println(WiFi.macAddress());
-  Serial.println("-----------------");
+  Serial.begin(115200);  
+  // wifiManager.to_STA(ssid, password);
   esp_task_wdt_init(10, true); 
-  mqtt.start();
-  Controller controller(id, 1);
-  wifiManager.to_STA(ssid, password);
-  // wifiManager.to_AP();
-  // Serial.println(WiFi.softAPIP());
+  // mqtt.start();
+  Controller::getInstance();
+  
+  wifiManager.to_AP();
+  Serial.println(WiFi.softAPIP());
   WebServer::start();
 }
 
+
+int counter = 0;
 void loop() {
-  esp_task_wdt_reset(); 
-  delay(10);
-  mqtt.monitor();
+  if(counter >= 99){
+    counter = 0;
+  }
+  each_loop();
+  if(counter == 0){
+    every_ten_loops();
+  }
+
+  delay(100);
+  counter++;
 }
 
+void each_loop(){
+  esp_task_wdt_reset(); 
+  mqtt->monitor();
+  Controller::getInstance()->executeState();
+}
 
+void every_ten_loops() {
+  // Controller::getInstance()->executeSchedule();
+}
 
-
-
-
-
-// #include <ArduinoJson.h>
-
+// int led = 13;
 // void setup() {
+//   // Set pin mode
 
-//   Serial.begin(115200);
-//   Serial.println("---------------------");
-//   Serial.println(WiFi.macAddress());
-//   Serial.println("---------------------");
-//   while (!Serial)
-//     continue;
+//   pinMode(led, OUTPUT);
+//   digitalWrite(led,HIGH);
 
-//   // Allocate the JSON document
-//   JsonDocument doc;
-
-//   // Add values in the document
-//   doc["sensor"] = "gps";
-//   doc["time"] = 1351824120;
-
-//   // Add an array
-//   JsonArray data = doc["data"].to<JsonArray>();
-//   data.add(48.756080);
-//   data.add(2.302038);
-
-//   // Generate the minified JSON and send it to the Serial port
-//   serializeJson(doc, Serial);
-
-
-//   // Start a new line
-//   Serial.println();
-
-//   // Generate the prettified JSON and send it to the Serial port
-//   serializeJsonPretty(doc, Serial);
-//   // The above line prints:
-//   // {
-//   //   "sensor": "gps",
-//   //   "time": 1351824120,
-//   //   "data": [
-//   //     48.756080,
-//   //     2.302038
-//   //   ]
-//   // }
+  
 // }
 
 // void loop() {
-//   // not used in this example
+
+//   digitalWrite(led,HIGH);
+//   delay(100);
+//   digitalWrite(led,LOW);
+//   delay(100);
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

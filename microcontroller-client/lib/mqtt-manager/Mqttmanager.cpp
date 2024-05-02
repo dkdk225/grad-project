@@ -2,6 +2,8 @@
 #include "Arrayutils.h"
 #include "Controller.h"
 
+
+MqttManager* MqttManager::instance = nullptr;
 void MqttManager::reconnect(){
   while (!client->connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -66,3 +68,18 @@ void MqttManager::start() {
 PubSubClient MqttManager::getClient(){
   return *client;
 };
+
+MqttManager* MqttManager::getInstance(){
+  if (!instance) {
+    throw exception();
+  }
+  return instance;
+}
+
+MqttManager* MqttManager::createInstance(char* topic, const char* mqtt_server, const int mqtt_port, PubSubClient* client){
+  if (!instance) {
+    instance = new MqttManager(topic, mqtt_server, mqtt_port, client);
+  }
+  return instance;
+}
+
