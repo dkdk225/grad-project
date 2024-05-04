@@ -5,7 +5,8 @@
 #include <iostream>
 #include <Ntptimemanager.h>
 
-
+#ifndef Controller_h // Include guard starts
+#define Controller_h // Define the macro
 using namespace std;
 class SchedulePoint{
   int time;//min: 0, max: 86400 | time of day in seconds
@@ -23,6 +24,7 @@ class Controller {
 
   int mode; //0=manual|1=schedule
   int next_time_point_index;
+  boolean manual_update;
   std::map<string, int> manual; //manual mode settings
   std::map<string, vector<SchedulePoint>> schedule;
   vector<int> timeVec;
@@ -42,6 +44,7 @@ private:
     this->next_time_point_index = 0;
     this->fields = this->defaultFields();
     this->pin_map = this->defaultPinMap();
+    this->manual_update = false;
     this->setupChannels();
   }
 
@@ -65,3 +68,4 @@ public:
   void setFields(vector<string> fields);
 };
 
+#endif // Controller_h // Include guard ends

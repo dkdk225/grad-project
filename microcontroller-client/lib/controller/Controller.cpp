@@ -117,6 +117,7 @@ void Controller::update(JsonDocument doc){
       schedule.insert(std::pair<string, vector<SchedulePoint>> (field, {}));
       manual.insert(pair<string, int>(field, manualJsonObj[field]));
     }
+    this->manual_update = true;
     this->manual = manual;
   }
 
@@ -135,7 +136,7 @@ void Controller::update(JsonDocument doc){
 }
 
 void Controller::executeSchedule(){
-  int seconds = (NTPTimeManager::getClient()->seconds()%10)*86400/10;
+  int seconds = (NTPTimeManager::getClient()->seconds()%60)*86400/60;
   if(timeVec[next_time_point_index]<seconds){
     next_time_point_index++;
     this->executeSchedule();
@@ -163,12 +164,15 @@ void Controller::executeSchedule(){
 }
 
 void Controller::executeManual(){
-  for (int i = 0; i < fields.size();i++) {
-    string field = fields[i];
-    int current_pwm = manual[field];
-    int brightness = int(double(current_pwm) * double(255) / double(100));
-    ledcWrite(pin_map[field], brightness);
+  if(manual_update){
+    for (int i = 0; i < fields.size();i++) {
+      string field = fields[i];
+      int current_pwm = manual[field];
+      int brightness = int(double(current_pwm) * double(255) / double(100));
+      ledcWrite(pin_map[field], brightness);
+    }
   }
+  manual_update = false;
 }
 
 void Controller::setFields (vector<string> fields){
@@ -178,7 +182,6 @@ void Controller::setFields (vector<string> fields){
 void Controller::setupChannels(){
   for (int i = 0; i < fields.size();i++)
   {
-    std::cout << i << std::endl;
     int pin_number = pin_map[fields[i]];
     ledcSetup(pin_number, 5000, 8); 
     ledcAttachPin(pin_number, pin_number);
