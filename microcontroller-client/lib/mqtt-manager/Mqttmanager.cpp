@@ -2,7 +2,6 @@
 #include "Arrayutils.h"
 #include "Controller.h"
 
-
 MqttManager* MqttManager::instance = nullptr;
 void MqttManager::reconnect(){
   while (!client->connected()) {
