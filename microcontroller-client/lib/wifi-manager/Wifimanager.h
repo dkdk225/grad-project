@@ -1,6 +1,8 @@
 #include <WiFi.h>
 #include <Ntptimemanager.h>
 #include <Mqttmanager.h>
+#include <Looptasks.h>
+
 
 
 class WifiManager {
