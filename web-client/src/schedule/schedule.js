@@ -66,7 +66,7 @@ class Schedule {
    */
   buildPointStorage(parsedPoints) {
     const newPointStorage = {};
-    const firstfield = Object.keys(parsedPoints)[0]
+    const firstfield = Object.keys(parsedPoints)[0];
     for (let i = 0; i < parsedPoints[firstfield].length; i++) {
       const newPoint = {};
       for (let field of this.#fields) {

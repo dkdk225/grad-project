@@ -1,0 +1,9 @@
+to support larger mqtt communications change: 
+  increase the packet size in PubSubClient.h
+    #define MQTT_MAX_PACKET_SIZE 256 to 
+    #define MQTT_MAX_PACKET_SIZE 2048 
+
+to reduce watchdog timer issues:
+  increase the size of the _async_queue in AsyncTCP.cpp
+    _async_queue = xQueueCreate(32, sizeof(lwip_event_packet_t *)); to 
+    _async_queue = xQueueCreate(64, sizeof(lwip_event_packet_t *));

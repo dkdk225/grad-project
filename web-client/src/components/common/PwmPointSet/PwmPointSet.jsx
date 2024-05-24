@@ -33,7 +33,6 @@ function PwmPointSet({
           defaultValue={initialTime}
           ampm={false}
           onChange={(newTime) => {
-            console.log(newTime)
             const milliseconds = newTime.$H * 3600 + newTime.$m * 60;
             pointStates.time.setValue(milliseconds);
           }}
