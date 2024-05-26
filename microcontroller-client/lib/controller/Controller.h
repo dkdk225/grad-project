@@ -30,6 +30,7 @@ class Controller {
   vector<int> timeVec;
   vector<string> fields;
   std::map<string, int> pin_map;
+  JsonDocument currentPwm;
 
 private:
   // Static instance pointer
@@ -45,6 +46,7 @@ private:
     this->fields = this->defaultFields();
     this->pin_map = this->defaultPinMap();
     this->manual_update = false;
+    this->currentPwm = this->defaultCurrentPwm();
     this->setupChannels();
   }
 
@@ -60,12 +62,14 @@ public:
   std::vector<int> defaultTimeVec();
   std::vector<string> defaultFields();
   std::map<string, int> defaultPinMap();
+  JsonDocument defaultCurrentPwm();
   void updateSchedule(JsonObject scheduleJsonObj);
   void update(JsonDocument doc);
   void executeSchedule();
   void executeManual();
   void executeState();
   void setFields(vector<string> fields);
+  JsonDocument getCurrentPwmsAsJSON();
 };
 
 #endif // Controller_h // Include guard ends

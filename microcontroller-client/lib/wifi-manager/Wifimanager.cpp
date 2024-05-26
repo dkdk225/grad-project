@@ -41,3 +41,9 @@ void WifiManager::to_STA(const char* ssid, const char* password){
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 }
+
+void WifiManager::to_STA(){
+  WiFi.disconnect(true);
+  delay(100);
+  WiFi.mode(WIFI_STA);
+}

@@ -56,6 +56,13 @@ std::map<string, int> Controller::defaultPinMap(){
   return default_pin_map;
 };
 
+JsonDocument Controller::defaultCurrentPwm(){
+  JsonDocument doc;
+  for (int i = 0; i < fields.size();i++){
+    doc[fields[i]] = 0;
+  }
+  return doc;
+}
 
 void Controller::updateSchedule(JsonObject scheduleJsonObj){
   vector<int> timeVec = {};
@@ -149,7 +156,7 @@ void Controller::executeSchedule(){
     int previous_point = timeVec[next_time_point_index - 1];
     int next_point = timeVec[next_time_point_index];
     double time_multiplier = double(seconds - previous_point) / double(next_point - previous_point);
-
+    JsonDocument doc;
     for (const auto& pair : schedule) {
       string field = pair.first;
       vector<SchedulePoint>pwm_points = pair.second;
@@ -159,18 +166,23 @@ void Controller::executeSchedule(){
       double current_pwm = double(previous_pwm)+(time_multiplier * double(pwm_diff));
       int brightness = int(double(current_pwm) * double(255) / double(100));
       ledcWrite(pin_map[field], brightness);
+      doc[field] = brightness;
     }
+    currentPwm = doc;
   }
 }
 
 void Controller::executeManual(){
   if(manual_update){
+    JsonDocument doc;
     for (int i = 0; i < fields.size();i++) {
       string field = fields[i];
       int current_pwm = manual[field];
       int brightness = int(double(current_pwm) * double(255) / double(100));
       ledcWrite(pin_map[field], brightness);
+      doc[field] = brightness;
     }
+    currentPwm = doc;
   }
   manual_update = false;
 }
@@ -196,4 +208,6 @@ void Controller::executeState (){
   }
 }
 
-
+JsonDocument Controller::getCurrentPwmsAsJSON () {
+  return currentPwm;
+}
