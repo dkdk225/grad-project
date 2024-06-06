@@ -36,10 +36,13 @@ void WifiManager::to_STA(const char* ssid, const char* password){
   NTPTimeManager::getClient()->begin();
   MqttManager::getInstance()->start();
   LoopTasks::getInstance()->addForExecution("each_loop", "monitor_mqtt");
+  
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  Serial.println("Wifi Channel: ");
+  Serial.println(WiFi.channel());
 }
 
 void WifiManager::to_STA(){

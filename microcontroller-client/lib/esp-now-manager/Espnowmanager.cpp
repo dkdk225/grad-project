@@ -29,6 +29,7 @@ void EspNowManager::scanForSlaves(){
 
 
 void EspNowManager::propagateState(JsonDocument state){
+  Serial.println("attempt esp-now propagation");
   bool fromHead = true;
   esp_now_peer_info_t slave;
   int n = measureJson(state)+1;
