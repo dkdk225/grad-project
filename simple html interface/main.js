@@ -1,3 +1,9 @@
+deviceParams = {
+  mode: 0,
+  channel: 0,
+  prefix: "controller",
+};
+
 function buildWifiList(list) {
   const wifiList = document.querySelector(".wifi-list");
   wifiList.innerHTML = "";
@@ -24,6 +30,9 @@ function buildWifiList(list) {
     wifiList.appendChild(node);
   }
 }
+//====================================================================
+// ==========================EVENT LISTENERS==========================
+//====================================================================
 const settingsContainer = document.querySelector(".settings-container");
 document.querySelector(".refresh-button").addEventListener("click", (e) => {
   updateWifiList();
@@ -31,19 +40,74 @@ document.querySelector(".refresh-button").addEventListener("click", (e) => {
 document.querySelector(".settings-button").addEventListener("click", (e) => {
   showSettings();
 });
-document.querySelector(".settings__button").addEventListener("click", (e) => {
-  console.log("posting password");
-  const passwordField = document.querySelector(".settings__password");
-  const password = passwordField.value;
-  passwordField.value = "";
+document
+  .querySelector(".set-password__button")
+  .addEventListener("click", (e) => {
+    console.log("posting password");
+    const passwordField = document.querySelector(".settings__password");
+    const password = passwordField.value;
+    passwordField.value = "";
+    xhr(
+      "POST",
+      "/set-device-password",
+      (response) => {
+        console.log(response);
+        hideSettings();
+      },
+      JSON.stringify({ password })
+    );
+  });
+
+document.querySelector(".set-mode__button").addEventListener("click", (e) => {
+  const modeEnum = {
+    closed: 0,
+    master: 1,
+    slave: 2,
+  };
+  const modeField = document.querySelector(".settings__mode");
+  const mode = modeEnum[modeField.value];
+
+  console.log(mode);
   xhr(
     "POST",
-    "/set-device-password",
+    "/set-device-esp-now-mode",
     (response) => {
       console.log(response);
-      hideSettings();
+      deviceParams.mode = mode;
     },
-    JSON.stringify({ password })
+    JSON.stringify({ mode })
+  );
+});
+
+document
+  .querySelector(".set-channel__button")
+  .addEventListener("click", (e) => {
+    const channelField = document.querySelector(".settings__channel");
+    const channel = channelField.value;
+    console.log(channel);
+    xhr(
+      "POST",
+      "/set-device-esp-now-channel",
+      (response) => {
+        console.log(response);
+        deviceParams.channel = channel;
+      },
+      JSON.stringify({ channel })
+    );
+  });
+
+document.querySelector(".set-prefix__button").addEventListener("click", (e) => {
+  const prefixField = document.querySelector(".settings__prefix");
+  const prefix = prefixField.value;
+  console.log(prefix);
+  xhr(
+    "POST",
+    "/set-device-esp-now-prefix",
+    (response) => {
+      console.log(response);
+      deviceParams.prefix = prefix;
+    },
+    JSON.stringify({ prefix })
   );
 });
 
@@ -53,13 +117,46 @@ settingsContainer.addEventListener("click", (e) => {
   }
 });
 
+document
+  .querySelector(".settings-list__item.set-password")
+  .addEventListener("click", (e) => {
+    console.log("try set password");
+  });
+
+document
+  .querySelector(".settings-list__item.esp-now-settings")
+  .addEventListener("click", (e) => {
+    console.log("esp-now-settings");
+  });
+//====================================================================
+//====================================================================
+//====================================================================
+
 function updateWifiList() {
   console.log("refresh");
   xhr("GET", "/connections", (response) => {
+    console.log(response);
     const wifis = response.split(",");
     if (JSON.stringify(wifis) === JSON.stringify([""])) return;
     buildWifiList(wifis);
   });
+}
+
+function updateDeviceParams() {
+  let mode;
+  if (deviceParams.mode == 0) {
+    mode = "closed";
+  }
+  if (deviceParams.mode == 1) {
+    mode = "master";
+  }
+  if (deviceParams.mode == 2) {
+    mode = "slave";
+  }
+  console.log(mode);
+  document.querySelector(".settings__mode").value = mode;
+  document.querySelector(".settings__channel").value = deviceParams.channel;
+  document.querySelector(".settings__prefix").value = deviceParams.prefix;
 }
 
 function xhr(method, path, callback, body = null) {
@@ -82,5 +179,5 @@ function showSettings() {
 function hideSettings() {
   document.querySelector(".settings-container").style.display = "none";
 }
-
 updateWifiList();
+updateDeviceParams();
