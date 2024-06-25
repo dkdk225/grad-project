@@ -1,7 +1,33 @@
 #include "Espnowmanager.h"
-  uint8_t data = 20;
+
+void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  Serial.print("I sent data:");
+}
+
+void onDataRecv(const uint8_t *mac_addr, const byte *data, int data_len){
+  Serial.print("I just recieved ->");
+
+  std::string payload;
+  for (size_t i = 0; i < data_len; i++) {
+    payload += static_cast<char>(data[i]);
+  }
+  std::cout << payload << std::endl;
+  JsonDocument doc;
+  deserializeJson(doc, payload);
+  doc["mode"] == "manual";
+  Controller::getInstance()->updateManual(doc);
+}
+
+EspNowManager* EspNowManager::instance = nullptr;
+EspNowManager* EspNowManager::getInstance(){
+  if (!instance) {
+    instance = new EspNowManager();
+  }
+  return instance;
+}
 
 void EspNowManager::scanForSlaves(){
+  Serial.println("look for slaves");
   int8_t scanResults = WiFi.scanNetworks();
   for (int i = 0; i < scanResults; i++){
     String SSID = WiFi.SSID(i);
@@ -18,6 +44,7 @@ void EspNowManager::scanForSlaves(){
         if(!esp_now_is_peer_exist(slave->peer_addr)) {
           Serial.println("try to add device");
           esp_now_add_peer(slave);
+          this->slaves.push_back(slave);
           Serial.println("===========add the device==========");
           continue;
         }
@@ -27,6 +54,48 @@ void EspNowManager::scanForSlaves(){
   }
 }
 
+void EspNowManager::openMaster(){
+  esp_wifi_set_ps(WIFI_PS_NONE); // wifi congestion solution
+  delay(100);
+  if(WiFi.getMode() != WIFI_STA) WifiManager::to_ESPNOW_STA();
+  esp_now_init();
+  esp_now_register_send_cb(onDataSent);
+  this->scanForSlaves();
+  LoopTasks::getInstance()->addForExecution("each_loop", "propogate_state_via_esp_now");
+  std::cout << this->slaves.size() << std::endl;
+  for (int i = 0; i < this->slaves.size();i++){
+    std::cout << "SLAVE ADRESS" << std::endl;
+    for (int j = 0; j < 6; j++){
+      Serial.println(this->slaves[i]->peer_addr[j]);
+    }
+  }
+};
+
+
+void EspNowManager::close(){  
+  LoopTasks::getInstance()->excludeFromExecution("each_loop", "propogate_state_via_esp_now");
+  esp_now_deinit();
+  //remove slaves from heap to prevent memory leak
+  for (int i = 0; i < this->slaves.size();i++){
+    delete this->slaves[i];
+  }
+  esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
+};
+
+void EspNowManager::openSlave(){
+  WifiManager::to_ESPNOW_AP();
+  esp_now_init();
+  esp_now_register_recv_cb(onDataRecv);
+  esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
+  LoopTasks::getInstance()->excludeFromExecution("each_loop", "monitor_mqtt");
+};
+
+void EspNowManager::deleteSlaves() {
+  for (int i = 0; i < this->slaves.size();i++){
+    esp_now_del_peer(this->slaves[i]->peer_addr);
+    delete this->slaves[i];
+  }
+}
 
 void EspNowManager::propagateState(JsonDocument state){
   Serial.println("attempt esp-now propagation");
