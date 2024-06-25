@@ -8,9 +8,31 @@ void WifiManager::to_AP(){
   IPAddress gateway(192, 168, 1, 1); // Gateway for the network
   IPAddress subnet(255, 255, 255, 0); // Subnet mask
   WiFi.softAPConfig(apIP, gateway, subnet);
-  WiFi.softAP(device_ssid, password); 
+  WiFi.softAP(Config::SSID_AP.c_str(), Config::AP_password.c_str()); 
 }
 
+void WifiManager::to_ESPNOW_AP(){
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_AP);
+  delay(100);
+  // IPAddress apIP(192, 168, 1, 1); // IP address of the ESP32 in AP mode
+  // IPAddress gateway(192, 168, 1, 1); // Gateway for the network
+  // IPAddress subnet(255, 255, 255, 0); // Subnet mask
+  // WiFi.softAPConfig(apIP, gateway, subnet);
+  WiFi.softAP(Config::SSID_AP.c_str(), Config::AP_password.c_str(), Config::ESP_NOW_channel, 0); 
+}
+
+void WifiManager::to_ESPNOW_STA(){
+  delay(100);
+  WiFi.mode(WIFI_STA);
+  Serial.println("");
+  Serial.println("ESPNOW STA mode");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  Serial.println("Wifi Channel: ");
+  Serial.println(WiFi.channel());
+  Config::updateESP_NOW_channel(WiFi.channel());
+}
 
 
 void WifiManager::to_STA(const char* ssid, const char* password){
@@ -43,10 +65,5 @@ void WifiManager::to_STA(const char* ssid, const char* password){
   Serial.println(WiFi.localIP());
   Serial.println("Wifi Channel: ");
   Serial.println(WiFi.channel());
-}
-
-void WifiManager::to_STA(){
-  WiFi.disconnect(true);
-  delay(100);
-  WiFi.mode(WIFI_STA);
+  Config::updateESP_NOW_channel(WiFi.channel());
 }
