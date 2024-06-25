@@ -40,20 +40,16 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 PubSubClient *client_pointer = &client;
 MqttManager* mqtt = MqttManager::createInstance(topic, mqtt_server, mqtt_port, client_pointer);
-WifiManager wifiManager(ssid_ap, password_ap);
 LoopTasks* loopTaskManager = LoopTasks::getInstance();
-EspNowManager espNowManager = EspNowManager();
+EspNowManager *espNowManager = EspNowManager::getInstance();
 
 esp_now_peer_info slave;
 
 
 void each_loop();
 void every_ten_loops();
-void ScanForSlave();
 
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("I sent data:");
-}
+
 
 void setup() {
   Controller::getInstance();
@@ -62,29 +58,29 @@ void setup() {
   loopTaskManager->addTask("monitor_mqtt", [](){ mqtt->monitor();});
   loopTaskManager->addTask("execute_state", [](){ Controller::getInstance()->executeState();});
   loopTaskManager->addTask("reset_watchdog", [](){ esp_task_wdt_reset();});
-  loopTaskManager->addTask("propogate_state_via_esp_now", [](){ espNowManager.propagateState(Controller::getInstance()->getCurrentPwmsAsJSON()); });
+  loopTaskManager->addTask("propogate_state_via_esp_now", [](){ espNowManager->propagateState(Controller::getInstance()->getCurrentPwmsAsJSON()); });
+
+  loopTaskManager->addTask("print_current_pwm_values", []()
+                           { Serial.print("Currnet pwm values->"); std::cout << Controller::getInstance()->getCurrentPwmsAsJSON() << std::endl; });
+
   // loopTaskManager->setExecutionList("each_loop",{"reset_watchdog", "execute_state", "propogate_state_via_esp_now"});
 
 
-  loopTaskManager->setExecutionList("each_loop",{"reset_watchdog", "execute_state", });
+  loopTaskManager->setExecutionList("each_loop",{"reset_watchdog", "execute_state", "print_current_pwm_values" });
   // loopTaskManager->setExecutionList("every_ten_loops",{"execute_state"});
-  loopTaskManager->setExecutionList("every_ten_loops",{"propogate_state_via_esp_now"});
+
+  // loopTaskManager->setExecutionList("every_ten_loops",{"propogate_state_via_esp_now"});
 
 
-  wifiManager.to_STA(ssid, password);
-  // wifiManager.to_AP();
+  
+  WifiManager::to_AP();
   // Serial.println(WiFi.softAPIP());
 
-  // wifiManager.to_STA();
-  esp_now_init();
-  esp_now_register_send_cb(OnDataSent);
-  esp_wifi_set_ps(WIFI_PS_NONE); // wifi congestion solution
-
-  // ScanForSlave();
-  // esp_now_add_peer(&slave);
-  espNowManager.scanForSlaves();
-
+  // WifiManager::to_STA(ssid, password);
   WebServer::start();
+
+  // espNowManager->openMaster();
+  // espNowManager->openSlave();
 }
 
 
