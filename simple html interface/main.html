@@ -10,9 +10,31 @@
   <button class="button settings-button text">Settings</button>
   <div class="settings-container">
     <div class="settings-menu">
-      <div class="text settings__header">Set password</div>
-      <input class="settings__password" placeholder="password" type="password">
-      <button type="submit" class="button settings__button text">Set password</button>
+      <ul class="settings-list">
+        <li class="settings-list__item set-password"> Set Password</li>
+        <div class="settings__submenu set-password__menu">
+          <input class="settings__password" placeholder="Password" type="password">
+          <button type="submit" class="button settings__button text set-password__button">Set password</button>
+        </div>
+        <li class="settings-list__item esp-now-settings"> ESP-NOW Settings</li>
+        <div class="settings__submenu set-password__menu">
+          <select name="settings__mode" id="settings__mode" class="settings__mode">
+            <option value="closed">Closed</option>
+            <option value="master">Master</option>
+            <option value="slave">Slave</option>
+          </select>
+          <button type="submit" class="button settings__button text set-mode__button">Set Mode</button>
+        </div>        
+        <div class="settings__submenu set-password__menu">
+          <input class="settings__channel" placeholder="Channel" type="text">
+          <button type="submit" class="button settings__button text set-channel__button">Set Channel</button>
+        </div>  
+        <div class="settings__submenu set-password__menu">
+          <input class="settings__prefix" placeholder="Prefix" type="text">
+          <button type="submit" class="button settings__button text set-prefix__button">Set Prefix</button>
+        </div>  
+      </ul>
+
     </div>
   </div>
 
