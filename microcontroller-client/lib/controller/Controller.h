@@ -30,7 +30,7 @@ class Controller {
   vector<int> timeVec;
   vector<string> fields;
   std::map<string, int> pin_map;
-  JsonDocument currentPwm;
+  JsonDocument currentPwm; //currently brightnes values of colors 0-100
 
 private:
   // Static instance pointer
@@ -64,6 +64,7 @@ public:
   std::map<string, int> defaultPinMap();
   JsonDocument defaultCurrentPwm();
   void updateSchedule(JsonObject scheduleJsonObj);
+  void updateManual(JsonDocument pwmValues);
   void update(JsonDocument doc);
   void executeSchedule();
   void executeManual();

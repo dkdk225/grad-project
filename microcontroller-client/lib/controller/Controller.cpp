@@ -108,9 +108,21 @@ Controller* Controller::getInstance(){
   return instance;
 }
 
+void Controller::updateManual(JsonDocument pwmValues){
+    std::map<string, int> manual = {};
+    for (int i = 0; i < fields.size();i++){
+      string field = fields[i];
+      schedule.insert(std::pair<string, vector<SchedulePoint>> (field, {}));
+      manual.insert(pair<string, int>(field, pwmValues[field]));
+    }
+    this->manual_update = true;
+    this->manual = manual;
+}
+
+
 void Controller::update(JsonDocument doc){
   
-  std::map<string, int> manual = {};
+  // std::map<string, int> manual = {};
   JsonObject scheduleJsonObj = doc["schedule"].as<JsonObject>();
   JsonObject manualJsonObj = doc["manual"].as<JsonObject>();
 
@@ -119,13 +131,14 @@ void Controller::update(JsonDocument doc){
   boolean update_manual = doc.containsKey("manual");
 
   if(update_manual){
-    for (int i = 0; i < fields.size();i++){
-      string field = fields[i];
-      schedule.insert(std::pair<string, vector<SchedulePoint>> (field, {}));
-      manual.insert(pair<string, int>(field, manualJsonObj[field]));
-    }
-    this->manual_update = true;
-    this->manual = manual;
+    updateManual(manualJsonObj);
+    // for (int i = 0; i < fields.size();i++){
+    //   string field = fields[i];
+    //   schedule.insert(std::pair<string, vector<SchedulePoint>> (field, {}));
+    //   manual.insert(pair<string, int>(field, manualJsonObj[field]));
+    // }
+    // this->manual_update = true;
+    // this->manual = manual;
   }
 
   if(update_schedule){
@@ -166,7 +179,7 @@ void Controller::executeSchedule(){
       double current_pwm = double(previous_pwm)+(time_multiplier * double(pwm_diff));
       int brightness = int(double(current_pwm) * double(255) / double(100));
       ledcWrite(pin_map[field], brightness);
-      doc[field] = brightness;
+      doc[field] = int(current_pwm);
     }
     currentPwm = doc;
   }
@@ -180,7 +193,7 @@ void Controller::executeManual(){
       int current_pwm = manual[field];
       int brightness = int(double(current_pwm) * double(255) / double(100));
       ledcWrite(pin_map[field], brightness);
-      doc[field] = brightness;
+      doc[field] = int(current_pwm);
     }
     currentPwm = doc;
   }
