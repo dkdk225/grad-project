@@ -13,7 +13,7 @@ Run the folowing commands in main project folder:
 ### server
 Run the following commands in main project folder:
 
-- `cd web-client`
+- `cd server`
 
 - `npm install`
 
